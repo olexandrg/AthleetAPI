@@ -11,48 +11,48 @@ namespace AthleetAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserModelsController : ControllerBase
+    public class WorkoutsController : ControllerBase
     {
         private readonly AthleetContext _context;
 
-        public UserModelsController(AthleetContext context)
+        public WorkoutsController(AthleetContext context)
         {
             _context = context;
         }
 
-        // GET: api/UserModels
+        // GET: api/Workouts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserModel>>> GetUserModels()
+        public async Task<ActionResult<IEnumerable<Workouts>>> GetWorkouts()
         {
-            return await _context.User.ToListAsync();
+            return await _context.Workouts.ToListAsync();
         }
 
-        // GET: api/UserModels/5
+        // GET: api/Workouts/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserModel>> GetUserModel(int id)
+        public async Task<ActionResult<Workouts>> GetWorkouts(int id)
         {
-            var userModel = await _context.User.FindAsync(id);
+            var workouts = await _context.Workouts.FindAsync(id);
 
-            if (userModel == null)
+            if (workouts == null)
             {
                 return NotFound();
             }
 
-            return userModel;
+            return workouts;
         }
 
-        // PUT: api/UserModels/5
+        // PUT: api/Workouts/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserModel(int id, UserModel userModel)
+        public async Task<IActionResult> PutWorkouts(int id, Workouts workouts)
         {
-            if (id != userModel.UserId)
+            if (id != workouts.WorkoutId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(userModel).State = EntityState.Modified;
+            _context.Entry(workouts).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace AthleetAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserModelExists(id))
+                if (!WorkoutsExists(id))
                 {
                     return NotFound();
                 }
@@ -73,37 +73,37 @@ namespace AthleetAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/UserModels
+        // POST: api/Workouts
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<UserModel>> PostUserModel(UserModel userModel)
+        public async Task<ActionResult<Workouts>> PostWorkouts(Workouts workouts)
         {
-            _context.User.Add(userModel);
+            _context.Workouts.Add(workouts);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUserModel), new { id = userModel.UserId }, userModel);
+            return CreatedAtAction("GetWorkouts", new { id = workouts.WorkoutId }, workouts);
         }
 
-        // DELETE: api/UserModels/5
+        // DELETE: api/Workouts/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<UserModel>> DeleteUserModel(int id)
+        public async Task<ActionResult<Workouts>> DeleteWorkouts(int id)
         {
-            var userModel = await _context.User.FindAsync(id);
-            if (userModel == null)
+            var workouts = await _context.Workouts.FindAsync(id);
+            if (workouts == null)
             {
                 return NotFound();
             }
 
-            _context.User.Remove(userModel);
+            _context.Workouts.Remove(workouts);
             await _context.SaveChangesAsync();
 
-            return userModel;
+            return workouts;
         }
 
-        private bool UserModelExists(int id)
+        private bool WorkoutsExists(int id)
         {
-            return _context.User.Any(e => e.UserId == id);
+            return _context.Workouts.Any(e => e.WorkoutId == id);
         }
     }
 }

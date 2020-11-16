@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AthleetAPI.Models
 {
-    public class UserModel
+    public class User
     {
         [Key]
         public int UserId { get; set; }
@@ -11,7 +11,7 @@ namespace AthleetAPI.Models
         public string UserHeadline { get; set; }
     }
 
-    public class UserWorkoutModel
+    public class UserWorkouts
     {
         [Key]
         public int UserWorkoutId { get; set; }
@@ -20,7 +20,7 @@ namespace AthleetAPI.Models
         public DateTime WorkoutDate { get; set; }
     }
 
-    public class UserWorkoutExercisesModel
+    public class UserWorkoutExercises
     {
         [Key]
         public int UserWorkoutExerciseId { get; set; }
@@ -29,7 +29,7 @@ namespace AthleetAPI.Models
         public int NumberOfReps { get; set; }
     }
 
-    public class WorkoutsModel
+    public class Workouts
     {
         [Key]
         public int WorkoutId { get; set; }
@@ -37,7 +37,7 @@ namespace AthleetAPI.Models
         public string Description { get; set; }
     }
 
-    public class WorkoutExercisesModel
+    public class WorkoutExercises
     {
         [Key]
         public int WorkoutExerciseId { get; set; }
@@ -46,7 +46,7 @@ namespace AthleetAPI.Models
         public int DefaultReps { get; set; }
     }
 
-    public class ExercisesModel
+    public class Exercises
     {
         [Key]
         public int ExerciseId { get; set; }
