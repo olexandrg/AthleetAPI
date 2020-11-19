@@ -3,13 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AthleetAPI.Models
 {
-    public class User
-    {
-        [Key]
-        public int UserId { get; set; }
-        public string UserName { get; set; }
-        public string UserHeadline { get; set; }
-    }
+    
 
     public class UserWorkouts
     {
