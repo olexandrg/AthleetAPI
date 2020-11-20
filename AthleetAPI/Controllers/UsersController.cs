@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AthleetAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AthleetAPI.Controllers
 {
@@ -19,6 +20,24 @@ namespace AthleetAPI.Controllers
         {
             _context = context;
         }
+
+
+        // GET: api/users/auth
+        [HttpGet("auth")]
+        [Authorize] // --> Use this tag to make it so a bearer token must be provided
+        public ActionResult<IEnumerable<string>> GetAuthUser()
+        {
+            List<string> values = new List<string>();
+            values.Add("This");
+            values.Add("is");
+            values.Add("a");
+            values.Add("secret");
+
+            return values;
+        }
+
+
+
 
         // GET: api/Users
         [HttpGet]
