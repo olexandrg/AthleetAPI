@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AthleetAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AthleetAPI.Controllers
 {
@@ -22,6 +23,7 @@ namespace AthleetAPI.Controllers
 
         // GET: api/UserWorkouts
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<UserWorkouts>>> GetUserWorkouts()
         {
             return await _context.UserWorkouts.ToListAsync();
@@ -29,6 +31,7 @@ namespace AthleetAPI.Controllers
 
         // GET: api/UserWorkouts/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<UserWorkouts>> GetUserWorkouts(int id)
         {
             var userWorkouts = await _context.UserWorkouts.FindAsync(id);
@@ -45,6 +48,7 @@ namespace AthleetAPI.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutUserWorkouts(int id, UserWorkouts userWorkouts)
         {
             if (id != userWorkouts.UserWorkoutId)
@@ -77,6 +81,7 @@ namespace AthleetAPI.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<UserWorkouts>> PostUserWorkouts(UserWorkouts userWorkouts)
         {
             _context.UserWorkouts.Add(userWorkouts);
@@ -87,6 +92,7 @@ namespace AthleetAPI.Controllers
 
         // DELETE: api/UserWorkouts/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<UserWorkouts>> DeleteUserWorkouts(int id)
         {
             var userWorkouts = await _context.UserWorkouts.FindAsync(id);

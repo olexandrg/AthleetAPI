@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AthleetAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AthleetAPI.Controllers
 {
@@ -22,6 +23,7 @@ namespace AthleetAPI.Controllers
 
         // GET: api/WorkoutExercises
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<WorkoutExercises>>> GetWorkoutExercise()
         {
             return await _context.WorkoutExercises.ToListAsync();
@@ -29,6 +31,7 @@ namespace AthleetAPI.Controllers
 
         // GET: api/WorkoutExercises/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<WorkoutExercises>> GetWorkoutExercises(int id)
         {
             var workoutExercises = await _context.WorkoutExercises.FindAsync(id);
@@ -45,6 +48,7 @@ namespace AthleetAPI.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutWorkoutExercises(int id, WorkoutExercises workoutExercises)
         {
             if (id != workoutExercises.WorkoutExerciseId)
@@ -77,6 +81,7 @@ namespace AthleetAPI.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<WorkoutExercises>> PostWorkoutExercises(WorkoutExercises workoutExercises)
         {
             _context.WorkoutExercises.Add(workoutExercises);
@@ -87,6 +92,7 @@ namespace AthleetAPI.Controllers
 
         // DELETE: api/WorkoutExercises/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<WorkoutExercises>> DeleteWorkoutExercises(int id)
         {
             var workoutExercises = await _context.WorkoutExercises.FindAsync(id);
