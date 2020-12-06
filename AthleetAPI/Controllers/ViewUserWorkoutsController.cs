@@ -24,9 +24,10 @@ namespace AthleetAPI.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<ViewUserWorkouts>>> ViewWorkout()
+        public async Task<ActionResult<IEnumerable<ViewUserWorkouts>>> ViewWorkout([FromQuery(Name = "UserName")] String UserName)
         {
-            return _context.ViewUserWorkouts.FromSqlRaw("select * from fnViewUserWorkouts('SimiF')").ToList();
+            var userName = new SqlParameter("@UserName", UserName);
+            return _context.ViewUserWorkouts.FromSqlRaw("select * from fnViewUserWorkouts(@UserName)", userName).ToList();
         }
     }
 }
