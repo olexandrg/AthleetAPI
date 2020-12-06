@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AthleetAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Data.SqlClient;
 
 namespace AthleetAPI.Controllers
 {
@@ -27,6 +28,23 @@ namespace AthleetAPI.Controllers
         public async Task<ActionResult<IEnumerable<Exercises>>> GetExercises()
         {
             return await _context.Exercises.ToListAsync();
+        }
+
+        // GET: api/Exercises/InsertExercise
+        [HttpGet("InsertExercise")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Workouts>>> CreateExercise(
+            [FromQuery(Name = "Name")] String Name,
+            [FromQuery(Name = "Description")] String Description,
+            [FromQuery(Name = "DefaultReps")] int DefaultReps,
+            [FromQuery(Name = "WorkoutName")] String WorkoutName)
+        {
+            var name = new SqlParameter("@Name", Name);
+            var description = new SqlParameter("@Description", Description);
+            var defaultReps = new SqlParameter("@DefaultReps", DefaultReps);
+            var workoutName = new SqlParameter("@WorkoutName", WorkoutName);
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertExercise @Name, @Description, @DefaultReps, @WorkoutName", name, description, defaultReps, workoutName);
+            return StatusCode(201);
         }
 
         // GET: api/Exercises/5
