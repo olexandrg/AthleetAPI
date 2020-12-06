@@ -30,9 +30,13 @@ namespace AthleetAPI.Controllers
             return await _context.Workouts.ToListAsync();
         }
 
+        // GET: api/Workouts/InsertWorkout
         [HttpGet("InsertWorkout")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Workouts>>> CreateWorkout([FromQuery(Name = "Name")] String Name, [FromQuery(Name = "Description")] String Description, [FromQuery(Name = "UserName")] String UserName)
+        public async Task<ActionResult<IEnumerable<Workouts>>> CreateWorkout(
+            [FromQuery(Name = "Name")] String Name,
+            [FromQuery(Name = "Description")] String Description,
+            [FromQuery(Name = "UserName")] String UserName)
         {
             var name = new SqlParameter("@Name", Name);
             var description = new SqlParameter("@Description", Description);
