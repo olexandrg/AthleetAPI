@@ -12,6 +12,7 @@ namespace AthleetAPI
         //This method will pull a UID from a JWT token
         public static String pullUID(String token)
         {
+            token = token.Replace("Bearer ", "");
             var webToken = new JsonWebToken(token);
             return webToken.Subject;
         }

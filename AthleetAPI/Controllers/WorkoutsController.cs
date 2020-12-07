@@ -39,7 +39,6 @@ namespace AthleetAPI.Controllers
             [FromHeader(Name = "Authorization")] String token)
         {
             //pull the UID from the token
-            token = token.Replace("Bearer ", "");
             String UID = Utilities.pullUID(token);
 
             //generate the sql parameters
