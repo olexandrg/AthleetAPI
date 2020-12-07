@@ -39,15 +39,16 @@ namespace AthleetAPI.Controllers
             [FromHeader(Name = "Authorization")] String token)
         {
             //pull the UID from the token
+            token = token.Replace("Bearer ", "");
             String UID = Utilities.pullUID(token);
 
             //generate the sql parameters
             var name = new SqlParameter("@Name", Name);
             var description = new SqlParameter("@Description", Description);
-            var uid = new SqlParameter("@UserName", UID);
+            var uid = new SqlParameter("@UID", UID);
             
             //run the query
-            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertWorkout @Name, @Description, @UserName", name, description, uid);
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertWorkout @UID, @Name, @Description", name, description, uid);
 
             //return success
             return StatusCode(201);
