@@ -1,9 +1,14 @@
 # Hosting API to AWS
 Download AWS VS toolkit: https://aws.amazon.com/visualstudio/
+
 Click View >> AWS Explorer
+
 Save new account info with provided Name, Access Key ID, and Secret Access Key
+
 Right click on the AthleetAPI in the Solution Explorer and select Public to AWS Elastic Beanstalk
+
 Select "dev" as production environment, "64bit Amazon Linux 2 v2.1.0 running .NET Core" as container type, and "t2.micro" as tier
+
 Click Next for all prompts and deploy  
 
 
