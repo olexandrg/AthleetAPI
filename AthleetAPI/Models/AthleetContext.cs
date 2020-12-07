@@ -4,6 +4,7 @@ namespace AthleetAPI.Models
 {
     public class AthleetContext : DbContext
     {
+        
         public AthleetContext(DbContextOptions<AthleetContext> options) 
             : base(options)
         {
