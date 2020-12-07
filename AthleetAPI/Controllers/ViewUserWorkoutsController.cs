@@ -24,10 +24,11 @@ namespace AthleetAPI.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<ViewUserWorkouts>>> ViewWorkout([FromQuery(Name = "UserName")] String UserName)
+        public async Task<ActionResult<IEnumerable<ViewUserWorkouts>>> ViewWorkout([FromHeader(Name = "Authorization")] String token)
         {
-            var userName = new SqlParameter("@UserName", UserName);
-            return _context.ViewUserWorkouts.FromSqlRaw("select * from fnViewUserWorkouts(@UserName)", userName).ToList();
+            String UID = Utilities.pullUID(token);
+            var uid = new SqlParameter("@UID", UID);
+            return _context.ViewUserWorkouts.FromSqlRaw("select * from fnViewUserWorkouts(@UID)", uid).ToList();
         }
     }
 }
