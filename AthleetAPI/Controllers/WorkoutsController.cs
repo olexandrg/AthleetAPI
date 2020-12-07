@@ -36,12 +36,20 @@ namespace AthleetAPI.Controllers
         public async Task<ActionResult<IEnumerable<Workouts>>> CreateWorkout(
             [FromQuery(Name = "Name")] String Name,
             [FromQuery(Name = "Description")] String Description,
-            [FromQuery(Name = "UserName")] String UserName)
+            [FromHeader(Name = "Authorization")] String token)
         {
+            //pull the UID from the token
+            String UID = Utilities.pullUID(token);
+
+            //generate the sql parameters
             var name = new SqlParameter("@Name", Name);
             var description = new SqlParameter("@Description", Description);
-            var userName = new SqlParameter("@UserName", UserName);
-            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertWorkout @Name, @Description, @UserName", name, description, userName);
+            var uid = new SqlParameter("@UserName", UID);
+            
+            //run the query
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertWorkout @Name, @Description, @UserName", name, description, uid);
+
+            //return success
             return StatusCode(201);
         }
 
