@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace AthleetAPI.Models
@@ -50,6 +51,16 @@ namespace AthleetAPI.Models
         public DateTime WorkoutDate { get; set; }
         public string WorkoutName { get; set; }
         public string Description { get; set; }
+    }
+
+    [Keyless]
+    public class ViewExerciseInWorkout
+    {
+        public string UserName { get; set; }
+        public string WorkoutName { get; set; }
+        public string ExerciseName { get; set; }
+        public string Description { get; set; }
+        public int DefaultReps { get; set; }
     }
 
     public class WorkoutExercises
