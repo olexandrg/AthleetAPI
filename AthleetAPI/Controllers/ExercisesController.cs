@@ -37,13 +37,17 @@ namespace AthleetAPI.Controllers
             [FromQuery(Name = "Name")] String Name,
             [FromQuery(Name = "Description")] String Description,
             [FromQuery(Name = "DefaultReps")] int DefaultReps,
-            [FromQuery(Name = "WorkoutName")] String WorkoutName)
+            [FromQuery(Name = "WorkoutName")] String WorkoutName,
+            [FromHeader(Name = "Authorization")] String token)
         {
+            String UID = Utilities.pullUID(token);
+
             var name = new SqlParameter("@Name", Name);
             var description = new SqlParameter("@Description", Description);
             var defaultReps = new SqlParameter("@DefaultReps", DefaultReps);
             var workoutName = new SqlParameter("@WorkoutName", WorkoutName);
-            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertExercise @Name, @Description, @DefaultReps, @WorkoutName", name, description, defaultReps, workoutName);
+            var uid = new SqlParameter("@UID", UID);
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertExercise @UID, @Name, @Description, @DefaultReps, @WorkoutName", uid, name, description, defaultReps, workoutName);
             return StatusCode(201);
         }
 
