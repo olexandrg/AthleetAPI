@@ -22,6 +22,9 @@ namespace AthleetAPI.Controllers
             _context = context;
         }
 
+        // GET api/ViewUserWorkouts
+        // Extracts Firebase UID token and uses it to fetch all user workouts
+        // SQL function: fnViewUserWorkouts
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<IEnumerable<ViewUserWorkouts>>> ViewWorkout([FromHeader(Name = "Authorization")] String token)

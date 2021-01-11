@@ -22,6 +22,7 @@ namespace AthleetAPI.Controllers
             _context = context;
         }
 
+        // GET api/ViewExerciseInWorkout/{WorkoutName}
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<IEnumerable<ViewExerciseInWorkout>>> ViewWorkout([FromHeader(Name = "Authorization")] string token,
