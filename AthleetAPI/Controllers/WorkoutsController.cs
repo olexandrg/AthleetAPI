@@ -53,6 +53,27 @@ namespace AthleetAPI.Controllers
             return StatusCode(201);
         }
 
+        // GET: api/Workouts/DeleteWorkout
+        [HttpGet("DeleteWorkout")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Workouts>>> DeleteWorkout(
+            [FromQuery(Name = "Name")] String Name,
+            [FromHeader(Name = "Authorization")] String token)
+        {
+            //pull the UID from the token
+            String UID = Utilities.pullUID(token);
+
+            //generate the sql parameters
+            var name = new SqlParameter("@Name", Name);
+            var uid = new SqlParameter("@UID", UID);
+
+            //run the query
+            await _context.Database.ExecuteSqlRawAsync("EXEC procedureDeleteWorkoutForUser @UID, @Name", uid, name);
+
+            //return success
+            return StatusCode(201);
+        }
+
         // GET: api/Workouts/5
         [HttpGet("{id}")]
         [Authorize]
