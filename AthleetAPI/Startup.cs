@@ -51,8 +51,6 @@ namespace AthleetAPI
                        ValidAudience = "athleet-782ae",
                        ValidateLifetime = true
                    };
-                   //Custom found at: https://www.thecodebuzz.com/jwt-authentication-in-asp-net-core-3-0-with-examples/
-                   // fix for scheme exists exception found here: https://stackoverflow.com/questions/49694383/use-multiple-jwt-bearer-authentication
                }).AddJwtBearer("Custom", options =>
                {
                    options.TokenValidationParameters = new TokenValidationParameters
