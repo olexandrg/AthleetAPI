@@ -14,6 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using AthleetAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AthleetAPI
 {
@@ -37,8 +39,8 @@ namespace AthleetAPI
             services.AddCors();
 
             services
-               .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-               .AddJwtBearer(options =>
+               .AddAuthentication()
+               .AddJwtBearer("Firebase", options =>
                {
                    options.Authority = "https://securetoken.google.com/athleet-782ae";
                    options.TokenValidationParameters = new TokenValidationParameters
@@ -49,7 +51,28 @@ namespace AthleetAPI
                        ValidAudience = "athleet-782ae",
                        ValidateLifetime = true
                    };
+               }).AddJwtBearer("Custom", options =>
+               {
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidateIssuer = true,
+                       ValidateAudience = true,
+                       ValidateLifetime = false,
+                       ValidateIssuerSigningKey = true,
+                       ValidIssuer = Configuration["JwtToken:Issuer"],
+                       ValidAudience = Configuration["JwtToken:Audience"],
+                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtToken:SecretKey"]))
+                   };
                });
+
+            services
+                .AddAuthorization(options =>
+                {
+                    options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .AddAuthenticationSchemes("Firebase", "Custom")
+                        .Build();
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
