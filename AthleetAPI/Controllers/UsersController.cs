@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AthleetAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Data.SqlClient;
 
 namespace AthleetAPI.Controllers
 {
@@ -21,91 +22,20 @@ namespace AthleetAPI.Controllers
             _context = context;
         }
 
-
         // GET: api/Users
-        [HttpGet]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
-        {
-            return await _context.User.ToListAsync();
-        }
-
-        // GET: api/Users/5
-        [HttpGet("{id}")]
-        [Authorize]
-        public async Task<ActionResult<User>> GetUser(int id)
-        {
-            var user = await _context.User.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
-        }
-
-        // PUT: api/Users/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        [Authorize]
-        public async Task<IActionResult> PutUser(int id, User user)
-        {
-            if (id != user.UserId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Users
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult> CreateUser([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "userName")] String userName, [FromQuery(Name = "description")] String Description)
         {
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
+            String UID = Utilities.pullUID(token);
 
-            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
-        }
+            var uid = new SqlParameter("@UID", UID);
+            var name = new SqlParameter("@Name", userName);
+            var description = new SqlParameter("@Headline", Description);
 
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        [Authorize]
-        public async Task<ActionResult<User>> DeleteUser(int id)
-        {
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertNewUser @UID, @Name, @Headline", name, uid, description);
 
-            _context.User.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return user;
+            return StatusCode(201);
         }
 
         private bool UserExists(int id)
