@@ -83,5 +83,30 @@ namespace AthleetAPI.Models
         public string Description { get; set; }
         public int DefaultReps { get; set; }
     }
-       
+
+    public class TeamWorkouts
+    {
+        [Key]
+        public int TeamWorkoutID { get; set; }
+        public int TeamID { get; set; }
+        public int WorkoutID { get; set; }
+        public DateTime WorkoutDate { get; set; }
+    }
+
+    public class TeamUser
+    {
+        [Key]
+        public int TeamUserID { get; set; }
+        public int TeamID { get; set; }
+        public int UserID { get; set; }
+        public bool isAdmin { get; set; }
+    }
+
+    public class Team
+    {
+        [Key]
+        public int TeamID { get; set; }
+        public string TeamName { get; set; }
+        public string Description { get; set; }
+    }
 }
