@@ -102,10 +102,9 @@ namespace AthleetAPI.Models
         public bool isAdmin { get; set; }
     }
 
+    [Keyless]
     public class Team
     {
-        [Key]
-        public int TeamID { get; set; }
         public string TeamName { get; set; }
         public string Description { get; set; }
     }

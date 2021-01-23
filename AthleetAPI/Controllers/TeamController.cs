@@ -22,6 +22,7 @@ namespace AthleetAPI.Controllers
             _context = context;
         }
 
+        //DON'T USE
         //GET: api/Team
         [HttpGet]
         [Authorize]
@@ -33,10 +34,22 @@ namespace AthleetAPI.Controllers
             var uid = new SqlParameter("@UID", UID);
             var name = new SqlParameter("@Name", teamName);
 
-            await _context.Database.ExecuteSqlRawAsync("EXEC procDeleteTeam @UID, @Name", name, uid);
+            //await _context.Database.ExecuteSqlRawAsync("EXEC procDeleteTeam @UID, @Name", name, uid);
 
             //TODO: return the actual data
             return StatusCode(200);
+        }
+
+        //GET: api/Team/list
+        [HttpGet("list")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Team>>> GetTeamList([FromHeader(Name = "Authorization")] String token)
+        {
+            String UID = Utilities.pullUID(token);
+
+            var uid = new SqlParameter("@UID", UID);
+
+            return _context.Team.FromSqlRaw("SELECT * FROM fnViewUserTeams(@UID)", uid).ToList();
         }
 
         //POST: api/Team
@@ -68,11 +81,6 @@ namespace AthleetAPI.Controllers
             await _context.Database.ExecuteSqlRawAsync("EXEC procDeleteTeam @UID, @Name", name, uid);
 
             return StatusCode(200);
-        }
-
-        private bool TeamExists(int id)
-        {
-            return _context.Team.Any(e => e.TeamID == id);
         }
     }
 }
