@@ -22,24 +22,6 @@ namespace AthleetAPI.Controllers
             _context = context;
         }
 
-        //DON'T USE
-        //GET: api/Team
-        [HttpGet]
-        [Authorize]
-        public async Task<ActionResult> GetTeam([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "teamName")] String teamName)
-        { 
-            //list all the teams the user is part of
-            String UID = Utilities.pullUID(token);
-
-            var uid = new SqlParameter("@UID", UID);
-            var name = new SqlParameter("@Name", teamName);
-
-            //await _context.Database.ExecuteSqlRawAsync("EXEC procDeleteTeam @UID, @Name", name, uid);
-
-            //TODO: return the actual data
-            return StatusCode(200);
-        }
-
         //GET: api/Team/list
         [HttpGet("list")]
         [Authorize]
