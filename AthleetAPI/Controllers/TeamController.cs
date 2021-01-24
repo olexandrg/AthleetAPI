@@ -22,16 +22,43 @@ namespace AthleetAPI.Controllers
             _context = context;
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<Team>> GetTeam([FromQuery(Name = "teamName")] String teamName)
+        {
+            var TeamName = new SqlParameter("@TeamName", teamName);
+            List<string> temp = new List<string>();
+
+            Team team = new Team();
+            team.TeamName = teamName;
+            TeamUserNames[] users = _context.TeamUserNames.FromSqlRaw("SELECT * FROM fnViewTeamUsers(@TeamName)", TeamName).ToArray();
+            foreach (TeamUserNames user in users)
+            {
+                temp.Add(user.UserName);
+            }
+            team.userNames = temp.ToArray();
+            temp.Clear();
+
+            TeamWorkoutNames[] workouts = _context.TeamWorkoutNames.FromSqlRaw("SELECT WorkoutName FROM fnViewTeamWorkouts(@TeamName)", TeamName).ToArray();
+            foreach (TeamWorkoutNames workout in workouts)
+            {
+                temp.Add(workout.WorkoutName);
+            }
+            team.workoutNames = temp.ToArray();
+
+            return team;
+        }
+
         //GET: api/Team/list
         [HttpGet("list")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Team>>> GetTeamList([FromHeader(Name = "Authorization")] String token)
+        public async Task<ActionResult<IEnumerable<TeamListItem>>> GetTeamList([FromHeader(Name = "Authorization")] String token)
         {
             String UID = Utilities.pullUID(token);
 
             var uid = new SqlParameter("@UID", UID);
 
-            return _context.Team.FromSqlRaw("SELECT * FROM fnViewUserTeams(@UID)", uid).ToList();
+            return _context.TeamListItem.FromSqlRaw("SELECT * FROM fnViewUserTeams(@UID)", uid).ToList();
         }
 
         //POST: api/Team
