@@ -31,25 +31,25 @@ namespace AthleetAPI.Controllers
             [FromQuery(Name = "description")] String Description)
         {
             String UID = Utilities.pullUID(token);
-
             var uid = new SqlParameter("@UID", UID);
             var name = new SqlParameter("@Name", userName);
             var description = new SqlParameter("@Headline", Description);
-
-            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertNewUser @UID, @Name, @Headline", name, uid, description);
-
-            return StatusCode(201);
-        }
-        [HttpGet]
-        [Authorize]
-        private async Task<ActionResult> CheckExistingUser([FromHeader(Name = "Authorization")] String token)
-        {
-            String UID = Utilities.pullUID(token);
-            var user =  await _context.User.FindAsync(UID);
-            if (user == null)
-                return StatusCode(404);
+            var result = await _context.Database.ExecuteSqlRawAsync("EXEC procInsertNewUser @UID, @Name, @Headline", name, uid, description);
+            if (result > 0)
+                return StatusCode(201);     //This means the user is truly new and a new db entry was added
             else
-                return StatusCode(200);
+                return StatusCode(200);     //This means the user is a returning user and the db has not been modified.
         }
+        //[HttpGet]
+        //[Authorize]
+        //private async Task<ActionResult> CheckExistingUser([FromHeader(Name = "Authorization")] String token)
+        //{
+        //    String UID = Utilities.pullUID(token);
+        //    var user =  await _context.User.FindAsync(UID);
+        //    if (user == null)
+        //        return StatusCode(404);
+        //    else
+        //        return StatusCode(200);
+        //}
     }
 }
