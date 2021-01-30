@@ -25,7 +25,10 @@ namespace AthleetAPI.Controllers
         // GET: api/Users
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult> CreateUser([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "userName")] String userName, [FromQuery(Name = "description")] String Description)
+        public async Task<ActionResult> CreateUser(
+            [FromHeader(Name = "Authorization")] String token, 
+            [FromQuery(Name = "userName")] String userName, 
+            [FromQuery(Name = "description")] String Description)
         {
             String UID = Utilities.pullUID(token);
 
@@ -37,10 +40,16 @@ namespace AthleetAPI.Controllers
 
             return StatusCode(201);
         }
-
-        private bool UserExists(int id)
+        [HttpGet]
+        [Authorize]
+        private async Task<ActionResult> CheckExistingUser([FromHeader(Name = "Authorization")] String token)
         {
-            return _context.User.Any(e => e.UserId == id);
+            String UID = Utilities.pullUID(token);
+            var user =  await _context.User.FindAsync(UID);
+            if (user == null)
+                return StatusCode(404);
+            else
+                return StatusCode(200);
         }
     }
 }
