@@ -2,6 +2,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AthleetAPI.Models
 {
@@ -102,11 +104,30 @@ namespace AthleetAPI.Models
         public bool isAdmin { get; set; }
     }
 
-    public class Team
+    [Keyless]
+    public class TeamListItem
     {
-        [Key]
-        public int TeamID { get; set; }
         public string TeamName { get; set; }
         public string Description { get; set; }
+    }
+
+    [NotMapped]
+    public class Team
+    {
+        public string TeamName { get; set; }
+        public string[] userNames { get; set; }
+        public string[] workoutNames { get; set; }
+    }
+
+    [Keyless]
+    public class TeamUserNames
+    {
+        public string UserName { get; set; }
+    }
+
+    [Keyless]
+    public class TeamWorkoutNames
+    {
+        public string WorkoutName { get; set; }
     }
 }

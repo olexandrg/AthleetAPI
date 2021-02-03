@@ -53,8 +53,8 @@ namespace AthleetAPI.Controllers
             return StatusCode(201);
         }
 
-        // GET: api/Workouts/DeleteWorkout
-        [HttpGet("DeleteWorkout")]
+        // GET: api/Workouts
+        [HttpGet]
         [Authorize]
         public async Task<ActionResult<IEnumerable<Workouts>>> DeleteWorkout(
             [FromQuery(Name = "Name")] String Name,
@@ -89,39 +89,6 @@ namespace AthleetAPI.Controllers
             return workouts;
         }
 
-        // PUT: api/Workouts/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        [Authorize]
-        public async Task<IActionResult> PutWorkouts(int id, Workouts workouts)
-        {
-            if (id != workouts.WorkoutId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(workouts).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!WorkoutsExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Workouts
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -135,26 +102,6 @@ namespace AthleetAPI.Controllers
             return CreatedAtAction("GetWorkouts", new { id = workouts.WorkoutId }, workouts);
         }
 
-        // DELETE: api/Workouts/5
-        [HttpDelete("{id}")]
-        [Authorize]
-        public async Task<ActionResult<Workouts>> DeleteWorkouts(int id)
-        {
-            var workouts = await _context.Workouts.FindAsync(id);
-            if (workouts == null)
-            {
-                return NotFound();
-            }
-
-            _context.Workouts.Remove(workouts);
-            await _context.SaveChangesAsync();
-
-            return workouts;
-        }
-
-        private bool WorkoutsExists(int id)
-        {
-            return _context.Workouts.Any(e => e.WorkoutId == id);
-        }
+    
     }
 }
