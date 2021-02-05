@@ -33,7 +33,7 @@ namespace AthleetAPI.Controllers
         // GET: api/Exercises/InsertExercise
         [HttpGet("InsertExercise")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Workouts>>> CreateExercise(
+        public async Task<ActionResult<IEnumerable<Workout>>> CreateExercise(
             [FromQuery(Name = "Name")] String Name,
             [FromQuery(Name = "Description")] String Description,
             [FromQuery(Name = "DefaultReps")] int DefaultReps,
