@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AthleetAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.SqlClient;
+using System.Net;
 
 namespace AthleetAPI.Controllers
 {
@@ -20,6 +21,39 @@ namespace AthleetAPI.Controllers
         public WorkoutsController(AthleetContext context)
         {
             _context = context;
+        }
+
+        //GET: api/Workouts
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Workout>>> ListWorkouts([FromHeader(Name = "Authorization")] String token)
+        {
+            //pull the UID from the token
+            String UID = Utilities.pullUID(token);
+            var uid = new SqlParameter("@UID", UID);
+
+            List<Workout> workouts = _context.Workout.FromSqlRaw("SELECT * FROM fnViewUserWorkouts(@UID)", uid).ToList();
+            if (workouts == null)
+            {
+                return StatusCode(404);
+            }
+
+            /*for (int i = 0; i < workouts.Count; i++)
+            {
+                var workoutid = new SqlParameter("@ID", workouts.ElementAt(i).WorkoutId);
+                /*List<int> exerciseids = _context.ExerciseID.FromSqlRaw("SELECT * FROM fnViewWorkoutExercises(@ID)", workoutid).ToList().Select(x =>
+                {
+                    return x.exerciseId;
+                });
+                int[] exerciseids = _context.Exercises.FromSqlRaw("SELECT * FROM fnViewWorkoutExercises(@ID)", workoutid).ToList().Select(x =>
+                {
+                    //workouts.ElementAt(i).exerciseIds.Add(x.ExerciseId);
+                    workouts.ElementAt(i).exerciseIds.Contains<ExerciseID>(x.ExerciseId);
+                });
+                workouts.ElementAt(i).exerciseIds = exerciseids;
+            }*/
+
+            return workouts;
         }
 
         // POST: api/Workouts

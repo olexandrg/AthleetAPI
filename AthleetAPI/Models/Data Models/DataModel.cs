@@ -35,12 +35,14 @@ namespace AthleetAPI.Models
         public int NumberOfReps { get; set; }
     }
 
-    public class Workouts
+    public class Workout
     {
         [Key]
         public int WorkoutId { get; set; }
         public string WorkoutName { get; set; }
         public string Description { get; set; }
+        [NotMapped]
+        public List<int> exerciseIds { get; set; }
     }
 
     public class ViewUserWorkouts
@@ -129,5 +131,11 @@ namespace AthleetAPI.Models
     public class TeamWorkoutNames
     {
         public string WorkoutName { get; set; }
+    }
+
+    [Keyless]
+    public class ExerciseID
+    {
+        public int exerciseId { get; set; }
     }
 }
