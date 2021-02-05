@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace AthleetAPI.Models
 {
@@ -24,7 +23,5 @@ namespace AthleetAPI.Models
         public DbSet<Team> Team { get; set; }
         public DbSet<TeamUserNames> TeamUserNames { get; set; }
         public DbSet<TeamWorkoutNames> TeamWorkoutNames { get; set; }
-        public DbSet<ExerciseID> ExerciseID { get; set; }
-        //public DbSet<List<int>> ExerciseID { get; set; }
     }
 }

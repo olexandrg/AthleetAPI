@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AthleetAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.SqlClient;
-using System.Net;
 
 namespace AthleetAPI.Controllers
 {
@@ -37,21 +35,6 @@ namespace AthleetAPI.Controllers
             {
                 return StatusCode(404);
             }
-
-            /*for (int i = 0; i < workouts.Count; i++)
-            {
-                var workoutid = new SqlParameter("@ID", workouts.ElementAt(i).WorkoutId);
-                /*List<int> exerciseids = _context.ExerciseID.FromSqlRaw("SELECT * FROM fnViewWorkoutExercises(@ID)", workoutid).ToList().Select(x =>
-                {
-                    return x.exerciseId;
-                });
-                int[] exerciseids = _context.Exercises.FromSqlRaw("SELECT * FROM fnViewWorkoutExercises(@ID)", workoutid).ToList().Select(x =>
-                {
-                    //workouts.ElementAt(i).exerciseIds.Add(x.ExerciseId);
-                    workouts.ElementAt(i).exerciseIds.Contains<ExerciseID>(x.ExerciseId);
-                });
-                workouts.ElementAt(i).exerciseIds = exerciseids;
-            }*/
 
             return workouts;
         }

@@ -31,7 +31,7 @@ namespace AthleetAPI.Controllers
         }
 
         // GET: api/Exercises/InsertExercise
-        /*[HttpGet("InsertExercise")]
+        [HttpGet("InsertExercise")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<Workouts>>> CreateExercise(
             [FromQuery(Name = "Name")] String Name,
@@ -49,7 +49,7 @@ namespace AthleetAPI.Controllers
             var uid = new SqlParameter("@UID", UID);
             await _context.Database.ExecuteSqlRawAsync("EXEC procInsertExercise @UID, @Name, @Description, @DefaultReps, @WorkoutName", uid, name, description, defaultReps, workoutName);
             return StatusCode(201);
-        }*/
+        }
 
         // GET: api/Exercises/5
         [HttpGet("{id}")]
