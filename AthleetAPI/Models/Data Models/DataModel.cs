@@ -35,7 +35,7 @@ namespace AthleetAPI.Models
         public int NumberOfReps { get; set; }
     }
 
-    public class Workouts
+    public class Workout
     {
         [Key]
         public int WorkoutId { get; set; }

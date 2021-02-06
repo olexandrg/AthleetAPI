@@ -22,7 +22,7 @@ namespace AthleetAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Users
+        // POST: api/Users
         [HttpPost]
         [Authorize]
         public async Task<ActionResult> CreateUser(
