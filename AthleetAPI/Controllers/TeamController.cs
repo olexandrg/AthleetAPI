@@ -95,7 +95,7 @@ namespace AthleetAPI.Controllers
         // PUT: api/Team/{teamName}/{userName}?isAdmin=true/false
         [HttpPut("{teamName}/{userName}")]
         [Authorize]
-        public async Task<ActionResult> UpdateUserAdmin([FromHeader(Name = "Authorization")] String token, String teamName, String userName, [FromQuery(Name = "isAdmin")] String isAdmin)
+        public async Task<ActionResult> UpdateUserAdmin([FromHeader(Name = "Authorization")] String token, String teamName, String userName, [FromQuery(Name = "isAdmin")] bool isAdmin)
         {
             String UID = Utilities.pullUID(token);
 
