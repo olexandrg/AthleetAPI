@@ -135,7 +135,7 @@ namespace AthleetAPI.Controllers
         }
 
 
-        // GET: api/Exercises/workout/{workoutName}
+        // GET: api/Exercises/workout/{workoutId}
         [HttpGet("workout/{woID}")]
         [Authorize]
         public ActionResult<List<Exercises>> GetWorkoutExercises(int woID)
