@@ -93,12 +93,15 @@ namespace AthleetAPI.Controllers
         }
 
         // PUT: api/Team/{teamName}/{userName}?isAdmin=true/false
-        [HttpPut]
+        [HttpPut("{teamName}/{userName}")]
         [Authorize]
-        public async Task<ActionResult> UpdateUserAdmin([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "teamName")] String teamName, 
-            [FromQuery(Name = "userName")] String userName, [FromQuery(Name = "isAdmin")] String isAdmin)
+        public async Task<ActionResult> UpdateUserAdmin([FromHeader(Name = "Authorization")] String token, String teamName, String userName, [FromQuery(Name = "isAdmin")] String isAdmin)
         {
+            String UID = Utilities.pullUID(token);
 
+            await _context.Database.ExecuteSqlRawAsync();
+
+            return StatusCode(200);
         }
     }
 }
