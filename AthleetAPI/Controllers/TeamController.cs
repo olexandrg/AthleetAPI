@@ -91,5 +91,14 @@ namespace AthleetAPI.Controllers
 
             return StatusCode(200);
         }
+
+        // PUT: api/Team/{teamName}/{userName}?isAdmin=true/false
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult> UpdateUserAdmin([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "teamName")] String teamName, 
+            [FromQuery(Name = "userName")] String userName, [FromQuery(Name = "isAdmin")] String isAdmin)
+        {
+
+        }
     }
 }
