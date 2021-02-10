@@ -99,8 +99,13 @@ namespace AthleetAPI.Controllers
         {
             String UID = Utilities.pullUID(token);
 
+            var uid = new SqlParameter("@UID", UID);
+            var tName = new SqlParameter("@TeamName", teamName);
+            var uName = new SqlParameter("@UserName", userName);
+            var admin = new SqlParameter("@IsAdmin", isAdmin);
+
             // calls procedure procUpdateUserAdmin
-            await _context.Database.ExecuteSqlRawAsync();
+            await _context.Database.ExecuteSqlRawAsync("EXEC procDeleteTeam @UID, @TeamName, @UserName, @IsAdmin", tName, uid, uName, admin);
 
             return StatusCode(200);
         }
