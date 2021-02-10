@@ -136,16 +136,21 @@ namespace AthleetAPI.Controllers
 
 
         // GET: api/Exercises/workout/{workoutName}
-        [HttpGet("workout/{woName}")]
+        [HttpGet("workout/{woID}")]
         [Authorize]
-        public ActionResult<List<Exercises>> GetWorkoutExercises(string woName)
+        public ActionResult<List<Exercises>> GetWorkoutExercises(int woID)
         {
-           
             // this could be refactored into some joins probably
 
             // Gets the workout wanted. There is a better way but I am using this for now because it works.
-            var workout = _context.Workouts.Where(w => w.WorkoutName == woName).FirstOrDefault();
+            var workout = _context.Workouts.Where(w => w.WorkoutId == woID).FirstOrDefault();
             var woExercises = _context.WorkoutExercises.Where(we => we.WorkoutId == workout.WorkoutId).ToList();
+
+            if (woExercises == null)
+            {
+                return NotFound();
+            }
+
             var exercises = new List<Exercises>();
 
             foreach(var e in woExercises)
@@ -157,6 +162,7 @@ namespace AthleetAPI.Controllers
             {
                 return NotFound();
             }
+
             return exercises;
         }
 
