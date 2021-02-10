@@ -99,6 +99,7 @@ namespace AthleetAPI.Controllers
         {
             String UID = Utilities.pullUID(token);
 
+            // calls procedure procUpdateUserAdmin
             await _context.Database.ExecuteSqlRawAsync();
 
             return StatusCode(200);
