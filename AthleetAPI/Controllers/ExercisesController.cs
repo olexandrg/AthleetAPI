@@ -133,5 +133,29 @@ namespace AthleetAPI.Controllers
         {
             return _context.Exercises.Any(e => e.ExerciseId == id);
         }
+
+
+        // GET: api/Exercises/workout/{workoutID}
+        [HttpGet("workout/{woName}")]
+        [Authorize]
+        public ActionResult<List<Exercises>> GetWorkoutExercises(string woName)
+        {
+            
+            var workout = _context.Workouts.Where(w => w.WorkoutName == woName).FirstOrDefault();
+            var woExercises = _context.WorkoutExercises.Where(we => we.WorkoutId == workout.WorkoutId).ToList();
+            var exercises = new List<Exercises>();
+
+            foreach(var e in woExercises)
+            {
+                exercises.Add(_context.Exercises.Where(ex => ex.ExerciseId == e.ExerciseId).First());
+            }
+
+            if (exercises == null)
+            {
+                return NotFound();
+            }
+            return exercises;
+        }
+
     }
 }

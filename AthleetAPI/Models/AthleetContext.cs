@@ -14,7 +14,7 @@ namespace AthleetAPI.Models
         public DbSet<User> User { get; set; }
         public DbSet<UserWorkouts> UserWorkouts { get; set; }
         public DbSet<UserWorkoutExercises> UserWorkoutExercises { get; set; }
-        public DbSet<Workout> Workout { get; set; }
+        public DbSet<Workout> Workouts { get; set; }
         public DbSet<WorkoutExercises> WorkoutExercises { get; set; }
         public DbSet<Exercises> Exercises { get; set; }
         public DbSet<ViewUserWorkouts> ViewUserWorkouts { get; set; }
