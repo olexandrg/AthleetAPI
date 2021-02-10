@@ -31,13 +31,8 @@ namespace AthleetAPI.Controllers
 
             Team team = new Team();
             team.TeamName = teamName;
-            TeamUserNames[] users = _context.TeamUserNames.FromSqlRaw("SELECT * FROM fnViewTeamUsers(@TeamName)", TeamName).ToArray();
-            foreach (TeamUserNames user in users)
-            {
-                temp.Add(user.UserName);
-            }
-            team.userNames = temp.ToArray();
-            temp.Clear();
+            IEnumerable<TeamUser> users = _context.TeamUser.FromSqlRaw("SELECT * FROM fnViewTeamUsers(@TeamName)", TeamName).ToList();
+            team.users = users;
 
             TeamWorkoutNames[] workouts = _context.TeamWorkoutNames.FromSqlRaw("SELECT WorkoutName FROM fnViewTeamWorkouts(@TeamName)", TeamName).ToArray();
             foreach (TeamWorkoutNames workout in workouts)

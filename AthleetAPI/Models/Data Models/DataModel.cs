@@ -95,15 +95,6 @@ namespace AthleetAPI.Models
         public DateTime WorkoutDate { get; set; }
     }
 
-    public class TeamUser
-    {
-        [Key]
-        public int TeamUserID { get; set; }
-        public int TeamID { get; set; }
-        public int UserID { get; set; }
-        public bool isAdmin { get; set; }
-    }
-
     [Keyless]
     public class TeamListItem
     {
@@ -115,14 +106,15 @@ namespace AthleetAPI.Models
     public class Team
     {
         public string TeamName { get; set; }
-        public string[] userNames { get; set; }
+        public IEnumerable<TeamUser> users { get; set; }
         public string[] workoutNames { get; set; }
     }
 
     [Keyless]
-    public class TeamUserNames
+    public class TeamUser
     {
         public string UserName { get; set; }
+        public bool isAdmin { get; set; }
     }
 
     [Keyless]
