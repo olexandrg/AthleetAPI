@@ -105,7 +105,7 @@ namespace AthleetAPI.Controllers
             var admin = new SqlParameter("@IsAdmin", isAdmin);
 
             // calls procedure procUpdateUserAdmin
-            await _context.Database.ExecuteSqlRawAsync("EXEC procDeleteTeam @UID, @TeamName, @UserName, @IsAdmin", tName, uid, uName, admin);
+            await _context.Database.ExecuteSqlRawAsync("EXEC procUpdateUserAdmin @UID, @TeamName, @UserName, @IsAdmin", tName, uid, uName, admin);
 
             return StatusCode(200);
         }
