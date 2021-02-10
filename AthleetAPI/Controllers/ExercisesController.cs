@@ -142,6 +142,8 @@ namespace AthleetAPI.Controllers
         {
            
             // this could be refactored into some joins probably
+
+            // Gets the workout wanted. There is a better way but I am using this for now because it works.
             var workout = _context.Workouts.Where(w => w.WorkoutName == woName).FirstOrDefault();
             var woExercises = _context.WorkoutExercises.Where(we => we.WorkoutId == workout.WorkoutId).ToList();
             var exercises = new List<Exercises>();
