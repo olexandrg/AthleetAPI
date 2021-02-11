@@ -30,7 +30,7 @@ namespace AthleetAPI.Controllers
             String UID = Utilities.pullUID(token);
             var uid = new SqlParameter("@UID", UID);
 
-            List<Workout> workouts = _context.Workouts.FromSqlRaw("SELECT * FROM fnViewUserWorkouts(@UID)", uid).ToList();
+            List<Workout> workouts = _context.Workout.FromSqlRaw("SELECT * FROM fnViewUserWorkouts(@UID)", uid).ToList();
             if (workouts == null)
             {
                 return StatusCode(404);
