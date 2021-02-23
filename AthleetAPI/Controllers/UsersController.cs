@@ -40,19 +40,12 @@ namespace AthleetAPI.Controllers
             else
                 return StatusCode(200);     //This means the user is a returning user and the db has not been modified.
         }
+        // GET: api/Users
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> CheckExistingUser(
+        public ActionResult<IEnumerable<User>> CheckExistingUser(
             [FromHeader(Name = "Authorization")] String token)
         {
-            //String UID = Utilities.pullUID(token);
-            //var user = await _context.User.FindAsync(UID);
-            //if (user == null)
-            //    return StatusCode(404);
-            //else
-            //    return StatusCode(200);
-
-            //TESTING TO RETURN USER OBJECT: USE WITH: private ActionResult<IEnumerable<User>>
             String UID = Utilities.pullUID(token);
             var uid = new SqlParameter("@UID", UID);
 
