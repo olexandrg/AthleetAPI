@@ -30,14 +30,17 @@ namespace AthleetAPI.Controllers
             return await _context.Exercises.ToListAsync();
         }
 
-        // GET: api/Exercises/InsertExercise
-        [HttpGet("InsertExercise")]
+        
+        [HttpPost]
         [Authorize]
         public async Task<ActionResult<IEnumerable<Workout>>> CreateExercise(
             [FromQuery(Name = "Name")] String Name,
             [FromQuery(Name = "Description")] String Description,
             [FromQuery(Name = "DefaultReps")] int DefaultReps,
-            [FromQuery(Name = "WorkoutName")] String WorkoutName,
+            [FromQuery(Name = "exerciseSets")] int ExerciseSets,
+            [FromQuery(Name = "MeasureUnits")] String MeasureUnits,
+            [FromQuery(Name = "unitCount")] int UnitCount,
+            [FromQuery(Name = "WorkoutName")] int WorkoutName,
             [FromHeader(Name = "Authorization")] String token)
         {
             String UID = Utilities.pullUID(token);
@@ -45,9 +48,12 @@ namespace AthleetAPI.Controllers
             var name = new SqlParameter("@Name", Name);
             var description = new SqlParameter("@Description", Description);
             var defaultReps = new SqlParameter("@DefaultReps", DefaultReps);
+            var sets = new SqlParameter("@ExerciseSets", ExerciseSets);
+            var unitType = new SqlParameter("@MeasureUnits", MeasureUnits);
+            var unitCount = new SqlParameter("@UnitCount", UnitCount);
             var workoutName = new SqlParameter("@WorkoutName", WorkoutName);
             var uid = new SqlParameter("@UID", UID);
-            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertExercise @UID, @Name, @Description, @DefaultReps, @WorkoutName", uid, name, description, defaultReps, workoutName);
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertExercise @UID, @Name, @Description, @DefaultReps, @exerciseSets, @MeasureUnits, @unitCount, @WorkoutName", uid, name, description, defaultReps, sets, unitType, unitCount, workoutName);
             return StatusCode(201);
         }
 
@@ -97,19 +103,6 @@ namespace AthleetAPI.Controllers
             }
 
             return NoContent();
-        }
-
-        // POST: api/Exercises
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        [Authorize]
-        public async Task<ActionResult<Exercises>> PostExercises(Exercises exercises)
-        {
-            _context.Exercises.Add(exercises);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetExercises", new { id = exercises.ExerciseId }, exercises);
         }
 
         // DELETE: api/Exercises/5

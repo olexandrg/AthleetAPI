@@ -19,7 +19,7 @@
     "configuration"    : "Release",
     "framework"        : "netcoreapp3.1",
     "self-contained"   : false,
-    "enhanced-health-type" : "enhanced",
+    "enhanced-health-type" : "basic",
     "additional-options"   : "",
     "proxy-server"         : "nginx"
 }
