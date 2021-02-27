@@ -40,7 +40,7 @@ namespace AthleetAPI.Controllers
             [FromQuery(Name = "exerciseSets")] int ExerciseSets,
             [FromQuery(Name = "MeasureUnits")] String MeasureUnits,
             [FromQuery(Name = "unitCount")] int UnitCount,
-            [FromQuery(Name = "WorkoutName")] int WorkoutName,
+            [FromQuery(Name = "WorkoutName")] String WorkoutName,
             [FromHeader(Name = "Authorization")] String token)
         {
             String UID = Utilities.pullUID(token);
