@@ -33,14 +33,14 @@ namespace AthleetAPI.Controllers
         
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Workout>>> CreateExercise(
+        public async Task<ActionResult> CreateExercise(
             [FromQuery(Name = "Name")] String Name,
             [FromQuery(Name = "Description")] String Description,
             [FromQuery(Name = "DefaultReps")] int DefaultReps,
             [FromQuery(Name = "exerciseSets")] int ExerciseSets,
             [FromQuery(Name = "MeasureUnits")] String MeasureUnits,
             [FromQuery(Name = "unitCount")] int UnitCount,
-            [FromQuery(Name = "WorkoutName")] String WorkoutName,
+            [FromQuery(Name = "WorkoutID")] int WorkoutID,
             [FromHeader(Name = "Authorization")] String token)
         {
             String UID = Utilities.pullUID(token);
@@ -51,9 +51,9 @@ namespace AthleetAPI.Controllers
             var sets = new SqlParameter("@ExerciseSets", ExerciseSets);
             var unitType = new SqlParameter("@MeasureUnits", MeasureUnits);
             var unitCount = new SqlParameter("@UnitCount", UnitCount);
-            var workoutName = new SqlParameter("@WorkoutName", WorkoutName);
+            var workoutId = new SqlParameter("@WorkoutID", WorkoutID);
             var uid = new SqlParameter("@UID", UID);
-            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertExercise @UID, @Name, @Description, @DefaultReps, @exerciseSets, @MeasureUnits, @unitCount, @WorkoutName", uid, name, description, defaultReps, sets, unitType, unitCount, workoutName);
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertExercise @UID, @Name, @Description, @DefaultReps, @exerciseSets, @MeasureUnits, @unitCount, @WorkoutID", uid, name, description, defaultReps, sets, unitType, unitCount, workoutId);
             return StatusCode(201);
         }
 
