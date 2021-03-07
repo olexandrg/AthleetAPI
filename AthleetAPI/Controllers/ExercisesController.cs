@@ -39,7 +39,7 @@ namespace AthleetAPI.Controllers
             [FromQuery(Name = "DefaultReps")] int DefaultReps,
             [FromQuery(Name = "exerciseSets")] int ExerciseSets,
             [FromQuery(Name = "MeasureUnits")] String MeasureUnits,
-            [FromQuery(Name = "unitCount")] int UnitCount,
+            [FromQuery(Name = "unitCount")] decimal UnitCount,
             [FromQuery(Name = "WorkoutID")] int WorkoutID,
             [FromHeader(Name = "Authorization")] String token)
         {
