@@ -26,8 +26,8 @@ namespace AthleetAPI.Controllers
         [HttpPost]
         [Authorize]
         public async Task<ActionResult> CreateUser(
-            [FromHeader(Name = "Authorization")] String token, 
-            [FromQuery(Name = "userName")] String userName, 
+            [FromHeader(Name = "Authorization")] String token,
+            [FromQuery(Name = "userName")] String userName,
             [FromQuery(Name = "description")] String Description)
         {
             String UID = Utilities.pullUID(token);
@@ -55,10 +55,10 @@ namespace AthleetAPI.Controllers
 
             return users;
         }
-        // PUT: api/Users
-        [HttpPut]
+        // PUT: api/Users/{id}
+        [HttpPut("{id}")]
         [Authorize]
-        public async Task<ActionResult> ChangeUsername(
+        public async Task<IActionResult> ChangeUsername(
             [FromHeader(Name = "Authorization")] String token,
             [FromQuery(Name = "userName")] String userName
             )
@@ -66,8 +66,27 @@ namespace AthleetAPI.Controllers
             String UID = Utilities.pullUID(token);
             var uid = new SqlParameter("@UID", UID);
             var name = new SqlParameter("@Name", userName);
-            await _context.Database.ExecuteSqlRawAsync("EXEC procChangeUsername @UID, @Name", uid, name);
-            return StatusCode(200);     //Updated succeeded
+            var user = _context.User.FromSqlRaw("SELECT * FROM dbo.[User] where FirebaseUID = @UID", uid).First();
+            if (user == null){ return NotFound();}
+            int id = user.UserId;
+
+            //user.UserName = userName;
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync("EXEC procChangeUsername @UID, @Name", uid, name);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+            //String UID = Utilities.pullUID(token);
+            //var uid = new SqlParameter("@UID", UID);
+            //var name = new SqlParameter("@Name", userName);
+            //await _context.Database.ExecuteSqlRawAsync("EXEC procChangeUsername @UID, @Name", uid, name);
+
+            //return NoContent();     //Updated succeeded
         }
         // PUT: api/Users
         [HttpPut]
