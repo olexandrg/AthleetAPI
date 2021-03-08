@@ -55,5 +55,39 @@ namespace AthleetAPI.Controllers
 
             return users;
         }
+        // PUT: api/Users
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult> ChangeUsername(
+            [FromHeader(Name = "Authorization")] String token,
+            [FromQuery(Name = "userName")] String userName
+            )
+        {
+            String UID = Utilities.pullUID(token);
+            var uid = new SqlParameter("@UID", UID);
+            var name = new SqlParameter("@Name", userName);
+            var result = await _context.Database.ExecuteSqlRawAsync("EXEC procChangeUsername @UID, @Name", uid, name);
+            if (result > 0)
+                return StatusCode(201);     //Username updated successfully, return success status code
+            else
+                return StatusCode(200);     //Updated failed, return fail status code
+        }
+        // PUT: api/Users
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult> ChangeHeadline(
+            [FromHeader(Name = "Authorization")] String token,
+            [FromQuery(Name = "Headline")] String headline
+            )
+        {
+            String UID = Utilities.pullUID(token);
+            var uid = new SqlParameter("@UID", UID);
+            var name = new SqlParameter("@Headline", headline);
+            var result = await _context.Database.ExecuteSqlRawAsync("EXEC procChangeHeadline @UID, @Headline", uid, headline);
+            if (result > 0)
+                return StatusCode(201);     //This means the user is truly new and a new db entry was added
+            else
+                return StatusCode(200);     //This means the user is a returning user and the db has not been modified.
+        }
     }
 }
