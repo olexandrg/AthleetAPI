@@ -66,11 +66,8 @@ namespace AthleetAPI.Controllers
             String UID = Utilities.pullUID(token);
             var uid = new SqlParameter("@UID", UID);
             var name = new SqlParameter("@Name", userName);
-            var result = await _context.Database.ExecuteSqlRawAsync("EXEC procChangeUsername @UID, @Name", uid, name);
-            if (result > 0)
-                return StatusCode(201);     //Username updated successfully, return success status code
-            else
-                return StatusCode(200);     //Updated failed, return fail status code
+            await _context.Database.ExecuteSqlRawAsync("EXEC procChangeUsername @UID, @Name", uid, name);
+            return StatusCode(200);     //Updated succeeded
         }
         // PUT: api/Users
         [HttpPut]
