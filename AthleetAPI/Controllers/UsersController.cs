@@ -56,10 +56,11 @@ namespace AthleetAPI.Controllers
             return users;
         }
         // PUT: api/Users/{id}
-        [HttpPut("{id}")]
+        [HttpPut("{userId}")]
         [Authorize]
         public async Task<IActionResult> ChangeUsername(
             [FromHeader(Name = "Authorization")] String token,
+            [FromBody] String userId,
             [FromQuery(Name = "userName")] String userName
             )
         {
@@ -68,9 +69,6 @@ namespace AthleetAPI.Controllers
             var name = new SqlParameter("@Name", userName);
             var user = _context.User.FromSqlRaw("SELECT * FROM dbo.[User] where FirebaseUID = @UID", uid).First();
             if (user == null){ return NotFound();}
-            int id = user.UserId;
-
-            //user.UserName = userName;
             try
             {
                 await _context.Database.ExecuteSqlRawAsync("EXEC procChangeUsername @UID, @Name", uid, name);
@@ -81,12 +79,7 @@ namespace AthleetAPI.Controllers
             }
 
             return NoContent();
-            //String UID = Utilities.pullUID(token);
-            //var uid = new SqlParameter("@UID", UID);
-            //var name = new SqlParameter("@Name", userName);
-            //await _context.Database.ExecuteSqlRawAsync("EXEC procChangeUsername @UID, @Name", uid, name);
-
-            //return NoContent();     //Updated succeeded
+         //Updated succeeded
         }
         // PUT: api/Users
         [HttpPut]
