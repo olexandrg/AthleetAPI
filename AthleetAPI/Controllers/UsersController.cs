@@ -56,47 +56,31 @@ namespace AthleetAPI.Controllers
             return users;
         }
         // PUT: api/Users/{id}
+        // only allowed to overwrite name and headline of user
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> ChangeUsername(
+        public ActionResult ChangeUsername(
             [FromHeader(Name = "Authorization")] String token,
             [FromBody] User user,
             int id
             )
         {
-            String UID = Utilities.pullUID(token);
-            var uid = new SqlParameter("@UID", UID);
-            var name = new SqlParameter("@Name", user.UserName);
-            var userFromDb = _context.User.FromSqlRaw("SELECT * FROM dbo.[User] where FirebaseUID = @UID", uid).First();
-            if (userFromDb == null){ return NotFound();}
+            var entity = _context.User.FirstOrDefault(user => user.UserId == id);
+
+            if (entity == null)
+                return StatusCode(204);
             try
             {
-                await _context.Database.ExecuteSqlRawAsync("EXEC procChangeUsername @UID, @Name", uid, name);
-            }
-            catch (Exception)
-            {
-                return NotFound();
+                entity.UserName = user.UserName;
+                entity.UserHeadline = user.UserHeadline;
+                _context.SaveChanges();
             }
 
-            return NoContent();
-         //Updated succeeded
-        }
-        // PUT: api/Users
-        [HttpPut]
-        [Authorize]
-        public async Task<ActionResult> ChangeHeadline(
-            [FromHeader(Name = "Authorization")] String token,
-            [FromQuery(Name = "Headline")] String headline
-            )
-        {
-            String UID = Utilities.pullUID(token);
-            var uid = new SqlParameter("@UID", UID);
-            var name = new SqlParameter("@Headline", headline);
-            var result = await _context.Database.ExecuteSqlRawAsync("EXEC procChangeHeadline @UID, @Headline", uid, headline);
-            if (result > 0)
-                return StatusCode(201);     //This means the user is truly new and a new db entry was added
-            else
-                return StatusCode(200);     //This means the user is a returning user and the db has not been modified.
+            catch (Exception e)
+            {
+                return StatusCode(204, e.Message);
+            }
+            return StatusCode(200);
         }
     }
 }
