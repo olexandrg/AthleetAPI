@@ -104,5 +104,22 @@ namespace AthleetAPI.Controllers
 
             return StatusCode(200);
         }
+
+        // PUT: api/Team/{teamName}/{userName}
+        [HttpPut("{teamName}/{userName}")]
+        [Authorize]
+        public async Task<ActionResult> InviteUserToTeam([FromHeader(Name = "Authorization")] String token, String teamName, String userName)
+        {
+            String UID = Utilities.pullUID(token);
+
+            var uid = new SqlParameter("@UID", UID);
+            var tName = new SqlParameter("@TeamName", teamName);
+            var uName = new SqlParameter("@UserName", userName);
+
+            // calls procedure procUpdateUserAdmin
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInviteUserToTeam @UID, @TeamName, @UserName", tName, uid, uName);
+
+            return StatusCode(200);
+        }
     }
 }
