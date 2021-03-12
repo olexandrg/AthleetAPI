@@ -105,8 +105,8 @@ namespace AthleetAPI.Controllers
             return StatusCode(200);
         }
 
-        // PUT: api/Team/{teamName}/{userName}
-        [HttpPut("{teamName}/{userName}")]
+        // PUT: api/Team/invite/{teamName}/{userName}
+        [HttpPut("invite/{teamName}/{userName}")]
         [Authorize]
         public async Task<ActionResult> InviteUserToTeam([FromHeader(Name = "Authorization")] String token, String teamName, String userName)
         {
@@ -116,7 +116,7 @@ namespace AthleetAPI.Controllers
             var tName = new SqlParameter("@TeamName", teamName);
             var uName = new SqlParameter("@UserName", userName);
 
-            // calls procedure procUpdateUserAdmin
+            // calls procedure procInviteUserToTeam
             await _context.Database.ExecuteSqlRawAsync("EXEC procInviteUserToTeam @UID, @TeamName, @UserName", tName, uid, uName);
 
             return StatusCode(200);
