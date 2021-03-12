@@ -61,7 +61,7 @@ namespace AthleetAPI.Controllers
         [Authorize]
         public async Task<ActionResult> CreateTeam([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "teamName")] String teamName, [FromQuery(Name = "description")] String description)
         {
-             String UID = Utilities.pullUID(token);
+            String UID = Utilities.pullUID(token);
 
             var uid = new SqlParameter("@UID", UID);
             var name = new SqlParameter("@Name", teamName);
@@ -70,6 +70,23 @@ namespace AthleetAPI.Controllers
             await _context.Database.ExecuteSqlRawAsync("EXEC procInsertNewTeam @UID, @Name, @Description", name, uid, Description);
 
             return StatusCode(201);           
+        }
+
+        // POST: api/Team/insertteamworkout
+        [HttpPost("insertteamworkout")]
+        [Authorize]
+        public async Task<ActionResult> InsertTeamWorkout([FromHeader(Name = "Authorization")] String token, int teamID, int workoutID, DateTime workoutDate)
+        {
+            String UID = Utilities.pullUID(token);
+
+            var _UID = new SqlParameter("@UID", UID);
+            var _teamID = new SqlParameter("@TeamID", teamID);
+            var _workoutID = new SqlParameter("@WorkoutID", workoutID);
+            var _workoutDate = new SqlParameter("@WorkoutDate", workoutDate);
+
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertNewTeamWorkout @UID, @TeamID, @WorkoutID, @WorkoutDate", _teamID, _UID, _workoutID, _workoutDate);
+
+            return StatusCode(200);
         }
 
         // DELETE: api/Team
