@@ -84,9 +84,9 @@ namespace AthleetAPI.Models
         public string ExerciseName { get; set; }
         public string Description { get; set; }
         public string MeasureUnits { get; set; }
-        public int DefaultReps { get; set; }
-        public int exerciseSets { get; set; }
-        public decimal unitCount { get; set; }
+        public int? DefaultReps { get; set; }
+        public int? exerciseSets { get; set; }
+        public decimal? unitCount { get; set; }
     }
 
     public class TeamWorkouts
