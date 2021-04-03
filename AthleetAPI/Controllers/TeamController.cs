@@ -56,6 +56,21 @@ namespace AthleetAPI.Controllers
             return _context.TeamListItem.FromSqlRaw("SELECT * FROM fnViewUserTeams(@UID)", uid).ToList();
         }
 
+        //GET: api/Team/leave
+        [HttpGet("leave")]
+        [Authorize]
+        public async Task<ActionResult> LeaveTeam([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "teamName")] String teamName)
+        {
+            String UID = Utilities.pullUID(token);
+
+            var uid = new SqlParameter("@UID", UID);
+            var TeamName = new SqlParameter("@Name", teamName);
+
+            await _context.Database.ExecuteSqlRawAsync("EXEC procLeaveTeam @UID, @Name", uid, TeamName);
+
+            return StatusCode(200);
+        }
+
         //POST: api/Team
         [HttpPost]
         [Authorize]
