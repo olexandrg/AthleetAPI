@@ -125,4 +125,13 @@ namespace AthleetAPI.Models
     {
         public string WorkoutName { get; set; }
     }
+
+    public class Conversation
+    {
+        [Key]
+        public int MessageID { get; set; }
+        public DateTime MessageDate { get; set; }
+        public string Content { get; set; }
+        public string UserName { get; set; }
+    }
 }
