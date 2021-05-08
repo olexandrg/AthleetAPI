@@ -29,7 +29,16 @@ namespace AthleetAPI.Controllers
         )
         {
             var TeamName = new SqlParameter("@TeamName", teamName);
-            return _context.Conversation.FromSqlRaw("SELECT * FROM fnViewTeamUsers(@TeamName)", TeamName).ToList();
+            try
+            {
+                var result = await _context.Conversation.FromSqlRaw("SELECT * FROM fnViewTeamConv(@TeamName)", TeamName).ToListAsync();
+                if (result == null)
+                {
+                    return NotFound();
+                }
+                return result;
+            }
+            catch (Exception ex) { return NotFound(ex.Message); }
         }
     }
 }
