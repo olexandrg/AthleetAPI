@@ -40,5 +40,24 @@ namespace AthleetAPI.Controllers
             }
             catch (Exception ex) { return NotFound(ex.Message); }
         }
+
+        [HttpPost("team")]
+        [Authorize]
+        public async Task<ActionResult> SaveTeamConversation(
+                [FromHeader(Name = "Authorization")] String token,
+                [FromQuery(Name = "conversationID")] String conversationID,
+                [FromQuery(Name = "content")] String content
+        )
+        {
+            String UID = Utilities.pullUID(token);
+
+            var uid = new SqlParameter("@UID", UID);
+            var ConvID = new SqlParameter("@ConvID", conversationID);
+            var Content = new SqlParameter("@Content", content);
+
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertNewTeamMessage @UID, @ConvID, @Content", ConvID, uid, Content);
+
+            return StatusCode(201);           
+        }
     }
 }
