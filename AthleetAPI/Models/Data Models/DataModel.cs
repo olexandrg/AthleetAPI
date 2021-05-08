@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -130,6 +129,7 @@ namespace AthleetAPI.Models
     {
         [Key]
         public int MessageID { get; set; }
+        public int ConversationID { get; set; }
         public DateTime MessageDate { get; set; }
         public string Content { get; set; }
         public string UserName { get; set; }
