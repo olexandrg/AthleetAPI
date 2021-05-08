@@ -131,7 +131,7 @@ namespace AthleetAPI.Models
         public int MessageID { get; set; }
         public int ConversationID { get; set; }
         public DateTime MessageDate { get; set; }
-        public string Content { get; set; }
+        public string MessageContent { get; set; }
         public string UserName { get; set; }
     }
 }
