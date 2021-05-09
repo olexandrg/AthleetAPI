@@ -31,7 +31,7 @@ namespace AthleetAPI.Controllers
 
             Team team = new Team();
             team.TeamName = teamName;
-            IEnumerable<TeamUser> users = _context.TeamUser.FromSqlRaw("SELECT * FROM fnViewTeamUsers(@TeamName)", TeamName).ToList();
+            IEnumerable<TeamUser> users = await _context.TeamUser.FromSqlRaw("SELECT * FROM fnViewTeamUsers(@TeamName)", TeamName).ToListAsync();
             team.users = users;
 
             TeamWorkoutNames[] workouts = _context.TeamWorkoutNames.FromSqlRaw("SELECT WorkoutName FROM fnViewTeamWorkouts(@TeamName)", TeamName).ToArray();
@@ -53,7 +53,7 @@ namespace AthleetAPI.Controllers
 
             var uid = new SqlParameter("@UID", UID);
 
-            return _context.TeamListItem.FromSqlRaw("SELECT * FROM fnViewUserTeams(@UID)", uid).ToList();
+            return await _context.TeamListItem.FromSqlRaw("SELECT * FROM fnViewUserTeams(@UID)", uid).ToListAsync();
         }
 
         //GET: api/Team/leave

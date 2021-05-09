@@ -66,7 +66,7 @@ namespace AthleetAPI.Controllers
             int id
             )
         {
-            var entity = _context.User.FirstOrDefault(user => user.UserId == id);
+            var entity = _context.User.FirstOrDefault(u => u.UserId == id);
 
             if (entity == null)
                 return StatusCode(204);
