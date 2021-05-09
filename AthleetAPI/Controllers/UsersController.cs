@@ -129,5 +129,31 @@ namespace AthleetAPI.Controllers
             }
             return StatusCode(200);
         }
+        // GET: api/Users/BlockedUsers
+        [HttpGet("BlockedUsers")]
+        [Authorize]
+        public ActionResult<IEnumerable<String>> GetBlockedUsers(
+            [FromHeader(Name = "Authorization")] String token)
+        {
+            String UID = Utilities.pullUID(token);
+            var uid = new SqlParameter("@UID", UID);
+
+            var users = _context.User.FromSqlRaw("SELECT * FROM dbo.[User] where FirebaseUID = @UID", uid).ToList();
+            if (users == null)
+                return StatusCode(403);
+            string blockString = users[0].BlockedUsers;
+            List<String> blockedUsers = new List<String>();
+            Regex reg = new Regex(" [0-9]+ ");
+            MatchCollection matches = reg.Matches(blockString);
+            foreach(Match m in matches)
+            {
+                string id = m.Value.Trim();
+                string name = _context.User.Find(id).UserName;
+                blockedUsers.Add(name);
+            } 
+
+            return blockedUsers;
+        }
+
     }
 }
