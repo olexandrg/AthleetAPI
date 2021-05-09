@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AthleetAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace AthleetAPI.Controllers
 {
@@ -76,6 +77,52 @@ namespace AthleetAPI.Controllers
                 _context.SaveChanges();
             }
 
+            catch (Exception e)
+            {
+                return StatusCode(204, e.Message);
+            }
+            return StatusCode(200);
+        }       
+        
+        // PUT: api/Users/blockedUsers{id}
+        // only allowed to overwrite name and headline of user
+        [HttpPut("{id}")]
+        [Authorize]
+        public ActionResult blockUser(
+            [FromHeader(Name = "Authorization")] String token,
+            [FromBody] string username)
+        {
+            User userToBlock = _context.User.FirstOrDefault(user => user.UserName == username);
+            var currentUser = _context.User.FirstOrDefault(user => user.FirebaseUID == token);
+            if (userToBlock == null)
+                return StatusCode(204);
+            try
+            {
+                currentUser.BlockedUsers.Concat(" " + userToBlock.UserId + " ");
+                _context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(204, e.Message);
+            }
+            return StatusCode(200);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public ActionResult unblockUser(
+            [FromHeader(Name = "Authorization")] String token,
+            [FromBody] string username)
+        {
+            User userToUnblock = _context.User.FirstOrDefault(user => user.UserName == username);
+            var currentUser = _context.User.FirstOrDefault(user => user.FirebaseUID == token);
+            if (userToUnblock == null)
+                return StatusCode(204);
+            try
+            {
+                currentUser.BlockedUsers.Replace(" " + userToUnblock.UserId + " ", null);
+                _context.SaveChanges();
+            }
             catch (Exception e)
             {
                 return StatusCode(204, e.Message);

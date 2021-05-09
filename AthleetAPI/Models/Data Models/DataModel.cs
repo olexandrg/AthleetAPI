@@ -15,6 +15,8 @@ namespace AthleetAPI.Models
         public string UserName { get; set; }
         public string FirebaseUID { get; set; }
         public string UserHeadline { get; set; }
+
+        public string BlockedUsers { get; set; }
     }
 
     public class UserWorkouts
