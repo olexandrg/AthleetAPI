@@ -84,9 +84,8 @@ namespace AthleetAPI.Controllers
             return StatusCode(200);
         }       
         
-        // PUT: api/Users/blockedUsers{id}
-        // only allowed to overwrite name and headline of user
-        [HttpPut("{id}")]
+        // PUT: api/Users/blockUser/{id}
+        [HttpPut("blockUser/{id}")]
         [Authorize]
         public ActionResult blockUser(
             [FromHeader(Name = "Authorization")] String token,
@@ -108,7 +107,8 @@ namespace AthleetAPI.Controllers
             return StatusCode(200);
         }
 
-        [HttpPut("{id}")]
+        // PUT: api/Users/unblockUser/{id}
+        [HttpPut("unblockUser/{id}")]
         [Authorize]
         public ActionResult unblockUser(
             [FromHeader(Name = "Authorization")] String token,
