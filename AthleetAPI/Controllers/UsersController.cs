@@ -84,13 +84,14 @@ namespace AthleetAPI.Controllers
             return StatusCode(200);
         }       
         
-        // PUT: api/Users/blockUser/{id}
-        [HttpPut("blockUser/{id}")]
+        // PUT: api/Users/blockUser
+        [HttpPost("blockUser")]
         [Authorize]
         public ActionResult blockUser(
             [FromHeader(Name = "Authorization")] String token,
-            [FromBody] string username)
+            [FromBody] String username)
         {
+            String uid = Utilities.pullUID(token);
             User userToBlock = _context.User.FirstOrDefault(user => user.UserName == username);
             var currentUser = _context.User.FirstOrDefault(user => user.FirebaseUID == token);
             if (userToBlock == null)
@@ -99,16 +100,17 @@ namespace AthleetAPI.Controllers
             {
                 currentUser.BlockedUsers.Concat(" " + userToBlock.UserId + " ");
                 _context.SaveChanges();
+                return StatusCode(200);
             }
             catch (Exception e)
             {
                 return StatusCode(204, e.Message);
             }
-            return StatusCode(200);
+            return StatusCode(204);
         }
 
-        // PUT: api/Users/unblockUser/{id}
-        [HttpPut("unblockUser/{id}")]
+        // PUT: api/Users/unblockUser
+        [HttpPost("unblockUser")]
         [Authorize]
         public ActionResult unblockUser(
             [FromHeader(Name = "Authorization")] String token,
