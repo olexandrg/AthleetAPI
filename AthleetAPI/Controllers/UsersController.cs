@@ -140,12 +140,12 @@ namespace AthleetAPI.Controllers
             String UID = Utilities.pullUID(token);
             var uid = new SqlParameter("@UID", UID);
             var users = _context.User.FromSqlRaw("SELECT u.UserID FROM dbo.[User] u where FirebaseUID = @UID", uid).ToList();
-            
+            var id = users[0].UserId;
             if (users == null) return StatusCode(403);
             else if(users.Count > 0)
             {
                 var userID = new SqlParameter("@UserID", users[0].UserId);
-                var blockedUsers = _context.User.FromSqlRaw("select bu.BlockedIDs from BlockedUsers bu where bi.UserID = @UserID", userID);
+                var blockedUsers = _context.User.FromSqlRaw("select bu.BlockedIDs from BlockedUsers bu where bu.UserID = @UserID", userID);
                 List<String> blockedUserNames = new List<String>();
             
                 foreach (var b in blockedUsers)
