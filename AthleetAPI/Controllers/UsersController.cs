@@ -66,7 +66,7 @@ namespace AthleetAPI.Controllers
             int id
             )
         {
-            var entity = _context.User.FirstOrDefault(u => u.UserId == id);
+            var entity = _context.User.FirstOrDefault(user => user.UserId == id);
 
             if (entity == null)
                 return StatusCode(204);
@@ -84,7 +84,7 @@ namespace AthleetAPI.Controllers
             return StatusCode(200);
         }       
         
-        // POST: api/Users/blockUser
+        // PUT: api/Users/blockUser
         [HttpPost("blockUser")]
         [Authorize]
         public ActionResult blockUser(
@@ -109,12 +109,12 @@ namespace AthleetAPI.Controllers
             return StatusCode(204);
         }
 
-        // POST: api/Users/unblockUser
+        // PUT: api/Users/unblockUser
         [HttpPost("unblockUser")]
         [Authorize]
         public ActionResult unblockUser(
             [FromHeader(Name = "Authorization")] String token,
-            [FromBody] String username)
+            [FromBody] string username)
         {
             User userToUnblock = _context.User.FirstOrDefault(user => user.UserName == username);
             var currentUser = _context.User.FirstOrDefault(user => user.FirebaseUID == token);
@@ -137,24 +137,11 @@ namespace AthleetAPI.Controllers
         public ActionResult<IEnumerable<String>> GetBlockedUsers(
             [FromHeader(Name = "Authorization")] String token)
         {
-            String UID = Utilities.pullUID(token);
-            var uid = new SqlParameter("@UID", UID);
-            var users = _context.User.FromSqlRaw("SELECT u.UserID FROM dbo.[User] u where FirebaseUID = @UID", uid).ToList();
-            var id = users[0].UserId;
-            if (users == null) return StatusCode(403);
-            else if(users.Count > 0)
-            {
-                var userID = new SqlParameter("@UserID", users[0].UserId);
-                var blockedUsers = _context.User.FromSqlRaw("select bu.BlockedIDs from BlockedUsers bu where bu.UserID = @UserID", userID);
-                List<String> blockedUserNames = new List<String>();
-            
-                foreach (var b in blockedUsers)
-                    blockedUserNames.Add(b.UserName);
-            
-                return blockedUserNames;
-            }
-            
-            return StatusCode(666);
+            var uid = new SqlParameter("@UID", Utilities.pullUID(token));
+            var user = _context.User.FromSqlRaw("SELECT * FROM dbo.[User] u where FirebaseUID = @UID",uid).First();
+            var userID = new SqlParameter("@UserID", user.UserId);
+            return new List<String>( _context.User.FromSqlRaw("SELECT u.UserName FROM [User] u WHERE u.UserID in (SELECT BlockedIDs FROM BlockedUsers bu WHERE UserID = @UserID)",userID).Select(x=>x.UserName));
+
         }
 
     }
