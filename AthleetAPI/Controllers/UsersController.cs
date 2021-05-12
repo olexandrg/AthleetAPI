@@ -94,24 +94,30 @@ namespace AthleetAPI.Controllers
             try
             {
                 String uid = Utilities.pullUID(token);
-                var userToBlock = new SqlParameter("@UserToBlock", username);
-                var idToBlock = _context.User.FromSqlRaw("Select * from dbo.[User] u where u.UserName = @UserToBlock", userToBlock).First().UserId;
-                var currentUser = new SqlParameter("@CurrentUser", uid);
-                var currentUserID = _context.User.FromSqlRaw("Select * from dbo.[User] u where u.FirebaseUID = @CurrentUser", currentUser).First().UserId;
-                if (userToBlock == null) return StatusCode(666);
-                if (currentUser == null) return StatusCode(999);
 
-                var userID = new SqlParameter("@UserID", currentUserID);
-                var blockID = new SqlParameter("@BlockID", idToBlock);
-                _context.BlockedUsers.FromSqlRaw("INSERT INTO [dbo].[BlockedUsers] ([UserID], [BlockedIDs]) VALUES(@UserID, @BlockID);", userID, blockID);
+                // validate user to block
+                var userToBlockModel = _context.User.Where(x => x.UserName == username).FirstOrDefault();
+                if (userToBlockModel == null) return StatusCode(404);
+
+                // validate current user
+                var currentUserModel = _context.User.Where(x => x.FirebaseUID == uid).FirstOrDefault();
+                if (currentUserModel == null) return StatusCode(404);
+
+                var blockedUserToInsert = new BlockedUser()
+                {
+                    UserID = currentUserModel.UserId,
+                    BlockedID = userToBlockModel.UserId
+                };
+
+                _context.BlockedUsers.Add(blockedUserToInsert);
                 _context.SaveChanges();
-                return StatusCode(200);
+
+                return StatusCode(201);
             }
             catch (Exception e)
             {
-                return StatusCode(204, e.Message);
+                return StatusCode(500, e.Message);
             }
-            return StatusCode(204);
         }
 
         // PUT: api/Users/unblockUser
