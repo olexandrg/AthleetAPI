@@ -89,7 +89,7 @@ namespace AthleetAPI.Controllers
         [Authorize]
         public ActionResult blockUser(
             [FromHeader(Name = "Authorization")] String token,
-            [FromQuery] String username)
+            [FromQuery(Name = "UserName")] String username)
         {
             try
             {
