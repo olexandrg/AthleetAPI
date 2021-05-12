@@ -14,6 +14,17 @@ namespace AthleetAPI.Models
         public string UserName { get; set; }
         public string FirebaseUID { get; set; }
         public string UserHeadline { get; set; }
+
+    }
+    
+    public class BlockedUser
+    {
+        [Key]
+        public int BlockedUsersID { get; set; }
+        public int UserID { get; set; }
+
+        public int BlockedID { get; set; }
+
     }
 
     public class UserWorkouts
@@ -24,6 +35,7 @@ namespace AthleetAPI.Models
         public int WorkoutId { get; set; }
         public DateTime WorkoutDate { get; set; }
     }
+
 
     public class UserWorkoutExercises
     {
