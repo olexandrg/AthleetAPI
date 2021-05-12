@@ -139,7 +139,7 @@ namespace AthleetAPI.Controllers
                 var currentUserModel = _context.User.Where(x => x.FirebaseUID == uid).FirstOrDefault();
                 if (currentUserModel == null) return StatusCode(404);
 
-                BlockedUser blockedUserToRemove = (BlockedUser)_context.BlockedUsers.Where(x => x.UserID == currentUserModel.UserId && x.BlockedID == userToUnblockModel.UserId);
+                BlockedUser blockedUserToRemove = _context.BlockedUsers.Where(x => x.UserID == currentUserModel.UserId && x.BlockedID == userToUnblockModel.UserId).FirstOrDefault();
 
                 _context.BlockedUsers.Remove(blockedUserToRemove);
                 _context.SaveChanges();
