@@ -102,17 +102,20 @@ namespace AthleetAPI.Controllers
                 // validate current user
                 var currentUserModel = _context.User.Where(x => x.FirebaseUID == uid).FirstOrDefault();
                 if (currentUserModel == null) return StatusCode(404);
-
-                var blockedUserToInsert = new BlockedUser()
+                bool BlockedUserEntryExists = _context.BlockedUsers.Any(x => x.UserID == currentUserModel.UserId && x.BlockedID == userToBlockModel.UserId);
+                if (!BlockedUserEntryExists)
                 {
-                    UserID = currentUserModel.UserId,
-                    BlockedID = userToBlockModel.UserId
-                };
+                    var blockedUserToInsert = new BlockedUser()
+                    {
+                        UserID = currentUserModel.UserId,
+                        BlockedID = userToBlockModel.UserId
+                    };
 
-                _context.BlockedUsers.Add(blockedUserToInsert);
-                _context.SaveChanges();
-
-                return StatusCode(201);
+                    _context.BlockedUsers.Add(blockedUserToInsert);
+                    _context.SaveChanges();
+                    return StatusCode(201);
+                }
+                return StatusCode(200);
             }
             catch (Exception e)
             {
@@ -127,21 +130,45 @@ namespace AthleetAPI.Controllers
             [FromHeader(Name = "Authorization")] String token,
             [FromQuery(Name ="UserName")] String username)
         {
-            String uid = Utilities.pullUID(token);
-            var userNameToUnblock = new SqlParameter("@UserNameToUnblock", username);
-            var currentUserFBUid = new SqlParameter("@CurrentUserFBUID", uid);
-            var userToUnblock = _context.User.FromSqlRaw("Select * from dbo.[User] u where u.UserName = @UserNameToUnblock", userNameToUnblock).First();
-            var currentUser = _context.User.FromSqlRaw("Select * from dbo.[User] u where u.FirebaseUID = @CurrentUserFBUID", currentUserFBUid).First();
-
-            if (userToUnblock == null) return StatusCode(204);
             try
             {
-                var userID = new SqlParameter("@UserID", currentUser.UserId);
-                var unblockID = new SqlParameter("@UnblockedID", userToUnblock.UserId);
-                var result = _context.BlockedUsers.FromSqlRaw("DELETE FROM [dbo].[BlockedUsers] WHERE BlockedUsers.UserID = @UserID and BlockedUsers.BlockedIDs = @UnblockedID", userID, unblockID);
-                return StatusCode(200, result.First());
+                String uid = Utilities.pullUID(token);
+
+                // validate user to block
+                var userToUnblockModel = _context.User.Where(x => x.UserName == username).FirstOrDefault();
+                if (userToUnblockModel == null) return StatusCode(404);
+
+                // validate current user
+                var currentUserModel = _context.User.Where(x => x.FirebaseUID == uid).FirstOrDefault();
+                if (currentUserModel == null) return StatusCode(404);
+
+                BlockedUser blockedUserToRemove = _context.BlockedUsers.Where(x => x.UserID == currentUserModel.UserId && x.BlockedID == userToUnblockModel.UserId).FirstOrDefault();
+
+                _context.BlockedUsers.Remove(blockedUserToRemove);
+                _context.SaveChanges();
+
+                return StatusCode(201);
             }
-            catch (Exception e) { return StatusCode(204, e.Message); }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+
+            /*            String uid = Utilities.pullUID(token);
+                        var userNameToUnblock = new SqlParameter("@UserNameToUnblock", username);
+                        var currentUserFBUid = new SqlParameter("@CurrentUserFBUID", uid);
+                        var userToUnblock = _context.User.FromSqlRaw("Select * from dbo.[User] u where u.UserName = @UserNameToUnblock", userNameToUnblock).First();
+                        var currentUser = _context.User.FromSqlRaw("Select * from dbo.[User] u where u.FirebaseUID = @CurrentUserFBUID", currentUserFBUid).First();
+
+                        if (userToUnblock == null) return StatusCode(204);
+                        try
+                        {
+                            var userID = new SqlParameter("@UserID", currentUser.UserId);
+                            var unblockID = new SqlParameter("@UnblockedID", userToUnblock.UserId);
+                            var result = _context.BlockedUsers.FromSqlRaw("DELETE FROM [dbo].[BlockedUsers] WHERE BlockedUsers.UserID = @UserID and BlockedUsers.BlockedIDs = @UnblockedID", userID, unblockID);
+                            return StatusCode(200, result.First());
+                        }
+                        catch (Exception e) { return StatusCode(204, e.Message); }*/
         }
         // GET: api/Users/BlockedUsers
         [HttpGet("BlockedUsers")]
@@ -149,10 +176,21 @@ namespace AthleetAPI.Controllers
         public ActionResult<IEnumerable<String>> GetBlockedUsers(
             [FromHeader(Name = "Authorization")] String token)
         {
-            var uid = new SqlParameter("@UID", Utilities.pullUID(token));
-            var user = _context.User.FromSqlRaw("SELECT * FROM dbo.[User] u where FirebaseUID = @UID",uid).First();
-            var userID = new SqlParameter("@UserID", user.UserId);
-            return new List<String>( _context.User.FromSqlRaw("SELECT u.UserName FROM [User] u WHERE u.UserID in (SELECT BlockedIDs FROM BlockedUsers bu WHERE UserID = @UserID)",userID).Select(x=>x.UserName));
+            try
+            {
+                var uid = Utilities.pullUID(token);
+                var user = _context.User.Where(x => x.FirebaseUID == uid).FirstOrDefault();
+                var blockedUsers = _context.BlockedUsers.Where(x => x.UserID == user.UserId).ToList();
+                List<String> blockedUsernames = new List<String>();
+                foreach(BlockedUser b in blockedUsers)
+                {
+                    var u = _context.User.Where(x => x.UserId == b.BlockedID).FirstOrDefault();
+                    blockedUsernames.Add(u.UserName);
+                }
+                return blockedUsernames;
+
+            }
+            catch(Exception e) { return StatusCode(500, e.Message); }
         }
 
     }
