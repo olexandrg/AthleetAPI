@@ -102,17 +102,20 @@ namespace AthleetAPI.Controllers
                 // validate current user
                 var currentUserModel = _context.User.Where(x => x.FirebaseUID == uid).FirstOrDefault();
                 if (currentUserModel == null) return StatusCode(404);
-
-                var blockedUserToInsert = new BlockedUser()
+                bool BlockedUserEntryExists = _context.BlockedUsers.Any(x => x.UserID == currentUserModel.UserId && x.BlockedID == userToBlockModel.UserId);
+                if (!BlockedUserEntryExists)
                 {
-                    UserID = currentUserModel.UserId,
-                    BlockedID = userToBlockModel.UserId
-                };
+                    var blockedUserToInsert = new BlockedUser()
+                    {
+                        UserID = currentUserModel.UserId,
+                        BlockedID = userToBlockModel.UserId
+                    };
 
-                _context.BlockedUsers.Add(blockedUserToInsert);
-                _context.SaveChanges();
-
-                return StatusCode(201);
+                    _context.BlockedUsers.Add(blockedUserToInsert);
+                    _context.SaveChanges();
+                    return StatusCode(201);
+                }
+                return StatusCode(200);
             }
             catch (Exception e)
             {
