@@ -21,6 +21,27 @@ namespace AthleetAPI.Controllers
         {
             _context = context;
         }
+        [HttpGet("viewUserConversations")]
+        [Authorize]
+
+        public async Task<ActionResult<List<Conversation>>> ViewUserConversations(
+            [FromHeader(Name = "Authorization")] String token
+         )
+        {
+            String UID = Utilities.pullUID(token);
+
+            try
+            {
+                User user = await _context.User.FirstOrDefaultAsync(x => x.FirebaseUID == UID);
+                if (user == null) return StatusCode(404, "User not found");
+
+                var conversations = await _context.Conversation.Where(x => x.UserName == user.UserName).ToListAsync();
+                if (conversations == null) return StatusCode(404, "User has no conversations");
+
+                return conversations;
+            }
+            catch (Exception ex) { return NotFound(ex.Message); }
+        }
 
         [HttpGet("team")]
         [Authorize]
