@@ -173,10 +173,21 @@ namespace AthleetAPI.Controllers
         public ActionResult<IEnumerable<String>> GetBlockedUsers(
             [FromHeader(Name = "Authorization")] String token)
         {
-            var uid = new SqlParameter("@UID", Utilities.pullUID(token));
-            var user = _context.User.FromSqlRaw("SELECT * FROM dbo.[User] u where FirebaseUID = @UID",uid).First();
-            var userID = new SqlParameter("@UserID", user.UserId);
-            return new List<String>( _context.User.FromSqlRaw("SELECT u.UserName FROM [User] u WHERE u.UserID in (SELECT BlockedIDs FROM BlockedUsers bu WHERE UserID = @UserID)",userID).Select(x=>x.UserName));
+            try
+            {
+                var uid = Utilities.pullUID(token);
+                var user = _context.User.Where(x => x.FirebaseUID == uid).FirstOrDefault();
+                var blockedUsers = _context.BlockedUsers.Where(x => x.UserID == user.UserId).ToList();
+                List<String> blockedUsernames = new List<String>();
+                foreach(BlockedUser b in blockedUsers)
+                {
+                    var u = _context.User.Where(x => x.UserId == b.BlockedID).FirstOrDefault();
+                    blockedUsernames.Add(u.UserName);
+                }
+                return blockedUsernames;
+
+            }
+            catch(Exception e) { return StatusCode(500, e.Message); }
         }
 
     }
