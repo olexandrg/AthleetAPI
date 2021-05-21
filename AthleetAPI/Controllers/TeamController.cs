@@ -136,5 +136,32 @@ namespace AthleetAPI.Controllers
 
             return StatusCode(200);
         }
+
+        // GET: api/Team/workouts/{id}
+        [HttpGet("workouts/{teamID}")]
+        [Authorize]
+        public ActionResult<IEnumerable<Workout>> GetTeamWorkouts(int teamID)
+        {
+            var teamWorkouts = _context.TeamWorkouts.Where(w => w.TeamID == teamID).ToList();
+            if (teamWorkouts == null)
+            {
+                return NotFound("Team has no workouts");
+            }
+
+            var workouts = new List<Workout>();
+
+            foreach (var w in teamWorkouts)
+            {
+                workouts.Add(_context.Workouts.Where(wo => wo.WorkoutId == w.WorkoutID).First());
+            }
+
+            if (workouts == null)
+            {
+                return NotFound();
+            }
+
+            return workouts;
+        }
     }
+
 }
