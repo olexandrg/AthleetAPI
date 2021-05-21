@@ -146,4 +146,11 @@ namespace AthleetAPI.Models
         public string MessageContent { get; set; }
         public string UserName { get; set; }
     }
+
+    public class TeamWorkoutModel
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string TeamName { get; set; }
+    }
 }

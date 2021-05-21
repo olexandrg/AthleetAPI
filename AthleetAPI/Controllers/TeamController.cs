@@ -162,6 +162,25 @@ namespace AthleetAPI.Controllers
 
             return workouts;
         }
+
+        [HttpPost("workout")]
+        [Authorize]
+        public async Task<ActionResult> CreateTeamWorkout(
+            [FromBody]TeamWorkoutModel teamWorkout
+            )
+        {
+
+            //generate the sql parameters
+            var name = new SqlParameter("@Name", teamWorkout.Name);
+            var description = new SqlParameter("@Description", teamWorkout.Description);
+            var teamName = new SqlParameter("@TeamName", teamWorkout.TeamName);
+
+            //run the query
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertTeamWorkout @Name, @Description, @TeamName", name, description, teamName);
+
+            //return success
+            return StatusCode(201);
+        }
     }
 
 }
