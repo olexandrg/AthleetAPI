@@ -138,10 +138,12 @@ namespace AthleetAPI.Controllers
         }
 
         // GET: api/Team/workouts/{id}
-        [HttpGet("workouts/{teamID}")]
+        [HttpGet("workouts")]
         [Authorize]
-        public ActionResult<IEnumerable<Workout>> GetTeamWorkouts(int teamID)
+        public ActionResult<IEnumerable<Workout>> GetTeamWorkouts(
+            [FromQuery(Name = "TeamID")] int teamID)
         {
+            var teamId = new SqlParameter("@TeamID", teamID);
             var teamWorkouts = _context.TeamWorkouts.Where(w => w.TeamID == teamID).ToList();
             if (teamWorkouts == null)
             {
