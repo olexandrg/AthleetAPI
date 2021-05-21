@@ -136,5 +136,73 @@ namespace AthleetAPI.Controllers
 
             return StatusCode(200);
         }
+
+        // GET: api/Team/workouts/{id}
+        [HttpGet("workouts")]
+        [Authorize]
+        public ActionResult<IEnumerable<Workout>> GetTeamWorkouts(
+            [FromQuery(Name = "TeamID")] int teamID)
+        {
+            var teamId = new SqlParameter("@TeamID", teamID);
+            var teamWorkouts = _context.TeamWorkouts.Where(w => w.TeamID == teamID).ToList();
+            if (teamWorkouts == null)
+            {
+                return NotFound("Team has no workouts");
+            }
+
+            var workouts = new List<Workout>();
+
+            foreach (var w in teamWorkouts)
+            {
+                workouts.Add(_context.Workouts.Where(wo => wo.WorkoutId == w.WorkoutID).First());
+            }
+
+            if (workouts == null)
+            {
+                return NotFound();
+            }
+
+            return workouts;
+        }
+
+        [HttpPost("workout")]
+        [Authorize]
+        public async Task<ActionResult> CreateTeamWorkout(
+            [FromBody]TeamWorkoutModel teamWorkout
+            )
+        {
+
+            //generate the sql parameters
+            var name = new SqlParameter("@Name", teamWorkout.Name);
+            var description = new SqlParameter("@Description", teamWorkout.Description);
+            var teamName = new SqlParameter("@TeamName", teamWorkout.TeamName);
+
+            //run the query
+            await _context.Database.ExecuteSqlRawAsync("EXEC procInsertTeamWorkout @Name, @Description, @TeamName", name, description, teamName);
+
+            //return success
+            return StatusCode(201);
+        }
+
+        [HttpDelete("workout")]
+        [Authorize]
+        public async Task<ActionResult> DeleteTeamWorkout(
+            [FromBody] DeleteTeamWorkoutModel teamWorkout,
+            [FromHeader(Name = "Authorization")] String token
+            )
+        {
+
+            //generate the sql parameters
+            var uid = new SqlParameter("@FirebaseUID", token);
+            var teamName = new SqlParameter("@TeamName", teamWorkout.TeamName);
+            var workoutName = new SqlParameter("@WorkoutName", teamWorkout.WorkoutName);
+
+            //run the query
+            await _context.Database.ExecuteSqlRawAsync("EXEC procDeleteTeamWorkout @FirebaseUID, @TeamName, @WorkoutName", uid, teamName, workoutName);
+
+            //return success
+            return StatusCode(204);
+        }
     }
+
 }
