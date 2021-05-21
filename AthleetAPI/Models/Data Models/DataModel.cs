@@ -153,4 +153,11 @@ namespace AthleetAPI.Models
         public string Description { get; set; }
         public string TeamName { get; set; }
     }
+
+    public class DeleteTeamWorkoutModel
+    {
+        public string TeamName { get; set; }
+        public string WorkoutName { get; set; }
+    }
 }
+

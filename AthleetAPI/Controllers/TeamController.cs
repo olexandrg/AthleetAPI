@@ -181,6 +181,26 @@ namespace AthleetAPI.Controllers
             //return success
             return StatusCode(201);
         }
+
+        [HttpDelete("workout")]
+        [Authorize]
+        public async Task<ActionResult> DeleteTeamWorkout(
+            [FromBody] DeleteTeamWorkoutModel teamWorkout,
+            [FromHeader(Name = "Authorization")] String token
+            )
+        {
+
+            //generate the sql parameters
+            var uid = new SqlParameter("@FirebaseUID", token);
+            var teamName = new SqlParameter("@TeamName", teamWorkout.TeamName);
+            var workoutName = new SqlParameter("@WorkoutName", teamWorkout.WorkoutName);
+
+            //run the query
+            await _context.Database.ExecuteSqlRawAsync("EXEC procDeleteTeamWorkout @FirebaseUID, @TeamName, @WorkoutName", uid, teamName, workoutName);
+
+            //return success
+            return StatusCode(204);
+        }
     }
 
 }
