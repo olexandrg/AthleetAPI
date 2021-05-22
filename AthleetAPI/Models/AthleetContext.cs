@@ -24,6 +24,9 @@ namespace AthleetAPI.Models
         public DbSet<Team> Team { get; set; }
         public DbSet<TeamUser> TeamUser { get; set; }
         public DbSet<TeamWorkoutNames> TeamWorkoutNames { get; set; }
-        public DbSet<Conversation> Conversation { get; set; }
+        public DbSet<Messages> Messages { get; set; }
+        public DbSet<Conversations> Conversations { get; set; }
+        public DbSet<UserConversations> UserConversations { get; set; }
+        public DbSet<ConvList> ConvList { get; set; }
     }
 }

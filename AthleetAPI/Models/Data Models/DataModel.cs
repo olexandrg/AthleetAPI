@@ -137,7 +137,7 @@ namespace AthleetAPI.Models
         public string WorkoutName { get; set; }
     }
 
-    public class Conversation
+    public class Messages
     {
         [Key]
         public int MessageID { get; set; }
@@ -145,5 +145,26 @@ namespace AthleetAPI.Models
         public DateTime MessageDate { get; set; }
         public string MessageContent { get; set; }
         public string UserName { get; set; }
+    }
+
+    public class Conversations
+    {
+        [Key]
+        public int ConversationID { get; set; }
+        public DateTime ConversationDate { get; set; }
+    }
+    public class UserConversations
+    {
+        [Key]
+        public int UserConversationID { get; set; }
+        public int UserID { get; set; }
+        public int ConversationID { get; set; }
+    }
+
+    [Keyless]
+    public class ConvList
+    {
+        public string UserName { get; set; }
+        public int ConversationID { get; set; }
     }
 }
