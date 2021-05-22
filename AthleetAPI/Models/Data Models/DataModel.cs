@@ -167,4 +167,18 @@ namespace AthleetAPI.Models
         public string UserName { get; set; }
         public int ConversationID { get; set; }
     }
+
+    public class TeamWorkoutModel
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string TeamName { get; set; }
+    }
+
+    public class DeleteTeamWorkoutModel
+    {
+        public string TeamName { get; set; }
+        public string WorkoutName { get; set; }
+    }
 }
+

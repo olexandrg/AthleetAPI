@@ -102,7 +102,7 @@ namespace AthleetAPI.Controllers
         [Authorize]
         public async Task<ActionResult> SaveMessage(
                 [FromHeader(Name = "Authorization")] String token,
-                [FromQuery(Name = "conversationID")] String conversationID,
+                [FromQuery(Name = "conversationID")] int conversationID,
                 [FromQuery(Name = "content")] String content
         )
         {
