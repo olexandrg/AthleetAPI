@@ -24,7 +24,7 @@ namespace AthleetAPI.Controllers
         [HttpGet("user/list")]
         [Authorize]
 
-        public async Task<ActionResult<List<ConvList>>> ViewUserConversations(
+        public ActionResult<List<ConvList>> ViewUserConversations(
             [FromHeader(Name = "Authorization")] String token
          )
         {
@@ -32,21 +32,28 @@ namespace AthleetAPI.Controllers
 
             try
             {
-                User user = await _context.User.FirstOrDefaultAsync(x => x.FirebaseUID == UID);
+                User user =  _context.User.FirstOrDefault(x => x.FirebaseUID == UID);
                 if (user == null) return StatusCode(404, "User not found");
 
-                var convs = await _context.UserConversations.Join(_context.Conversations, uc => uc.ConversationID, c => c.ConversationID, (uc, c) => new
+                var convs = _context.UserConversations.Join(_context.Conversations, uc => uc.ConversationID, c => c.ConversationID, (uc, c) => new
                 {
                     ConversationID = c.ConversationID,
                     UserID = uc.UserID
-                }).Where(x => x.UserID == user.UserId).Select(x => x.ConversationID).ToListAsync();
+                }).Where(x => x.UserID == user.UserId).Select(x => x.ConversationID).ToList();
                 if (convs == null) return StatusCode(404, "User has no conversations");
 
-                var conversations = _context.UserConversations.Where(x => convs.Contains(x.ConversationID) && x.UserID != user.UserId).Join(_context.User, uc => uc.UserID, u => u.UserId, (uc, u) => new
-                {
-                    ConversationID = uc.ConversationID,
-                    UserName = u.UserName
-                }).Select(x => new { x.UserName, x.ConversationID}).ToList();
+                var conversations 
+                    = _context.UserConversations
+                    .Where(x => convs
+                        .Contains(x.ConversationID) && x.UserID != user.UserId)
+                    .Join(_context.User, uc => uc.UserID, u => u.UserId, (uc, u) 
+                        => new
+                            {
+                                ConversationID = uc.ConversationID,
+                                UserName = u.UserName
+                            })
+                    .Select(x => new { x.UserName, x.ConversationID})
+                    .ToList();
 
                 List<ConvList> convList = new List<ConvList>();
 
@@ -57,8 +64,9 @@ namespace AthleetAPI.Controllers
 
                 return convList;
             }
-            catch (Exception ex) { return NotFound(ex.Message); }
+            catch (Exception ex) { return StatusCode(500, ex.Message); }
         }
+
 
         [HttpGet("user")]
         [Authorize]
