@@ -60,6 +60,25 @@ namespace AthleetAPI.Controllers
             catch (Exception ex) { return NotFound(ex.Message); }
         }
 
+        [HttpGet("user")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Messages>>> GetUserConversation(
+                [FromQuery(Name = "convID")] int convID
+        )
+        {
+            var ConvID = new SqlParameter("@ConversationID", convID);
+            try
+            {
+                var result = await _context.Messages.FromSqlRaw("SELECT * FROM fnViewUserMessages(@ConversationID)", ConvID).ToListAsync();
+                if (result == null)
+                {
+                    return NotFound();
+                }
+                return result;
+            }
+            catch (Exception ex) { return NotFound(ex.Message); }
+        }
+
         [HttpGet("team")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<Messages>>> GetTeamConversation(
@@ -79,9 +98,9 @@ namespace AthleetAPI.Controllers
             catch (Exception ex) { return NotFound(ex.Message); }
         }
 
-        [HttpPost("team")]
+        [HttpPost]
         [Authorize]
-        public async Task<ActionResult> SaveTeamConversation(
+        public async Task<ActionResult> SaveMessage(
                 [FromHeader(Name = "Authorization")] String token,
                 [FromQuery(Name = "conversationID")] String conversationID,
                 [FromQuery(Name = "content")] String content
@@ -93,6 +112,7 @@ namespace AthleetAPI.Controllers
             var ConvID = new SqlParameter("@ConvID", conversationID);
             var Content = new SqlParameter("@Content", content);
 
+            //The below only takes the convid so it works for both user and team messages
             await _context.Database.ExecuteSqlRawAsync("EXEC procInsertNewTeamMessage @UID, @ConvID, @Content", ConvID, uid, Content);
 
             return StatusCode(201);           
