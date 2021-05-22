@@ -21,17 +21,63 @@ namespace AthleetAPI.Controllers
         {
             _context = context;
         }
-
-        [HttpGet("team")]
+        [HttpGet("user/list")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Conversation>>> GetTeamConversation(
-                [FromQuery(Name = "teamName")] String teamName
-        )
+
+        public ActionResult<List<ConvList>> ViewUserConversations(
+            [FromHeader(Name = "Authorization")] String token
+         )
         {
-            var TeamName = new SqlParameter("@TeamName", teamName);
+            String UID = Utilities.pullUID(token);
+
             try
             {
-                var result = await _context.Conversation.FromSqlRaw("SELECT * FROM fnViewTeamConv(@TeamName)", TeamName).ToListAsync();
+                User user =  _context.User.FirstOrDefault(x => x.FirebaseUID == UID);
+                if (user == null) return StatusCode(404, "User not found");
+
+                var convs = _context.UserConversations.Join(_context.Conversations, uc => uc.ConversationID, c => c.ConversationID, (uc, c) => new
+                {
+                    ConversationID = c.ConversationID,
+                    UserID = uc.UserID
+                }).Where(x => x.UserID == user.UserId).Select(x => x.ConversationID).ToList();
+                if (convs == null) return StatusCode(404, "User has no conversations");
+
+                var conversations 
+                    = _context.UserConversations
+                    .Where(x => convs
+                        .Contains(x.ConversationID) && x.UserID != user.UserId)
+                    .Join(_context.User, uc => uc.UserID, u => u.UserId, (uc, u) 
+                        => new
+                            {
+                                ConversationID = uc.ConversationID,
+                                UserName = u.UserName
+                            })
+                    .Select(x => new { x.UserName, x.ConversationID})
+                    .ToList();
+
+                List<ConvList> convList = new List<ConvList>();
+
+                for (int i = 0; i < conversations.Count; i++)
+                {
+                    convList.Add(new ConvList{ ConversationID = conversations[i].ConversationID, UserName = conversations[i].UserName});
+                }
+
+                return convList;
+            }
+            catch (Exception ex) { return StatusCode(500, ex.Message); }
+        }
+
+
+        [HttpGet("user")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Messages>>> GetUserConversation(
+                [FromQuery(Name = "convID")] int convID
+        )
+        {
+            var ConvID = new SqlParameter("@ConversationID", convID);
+            try
+            {
+                var result = await _context.Messages.FromSqlRaw("SELECT * FROM fnViewUserMessages(@ConversationID)", ConvID).ToListAsync();
                 if (result == null)
                 {
                     return NotFound();
@@ -41,9 +87,28 @@ namespace AthleetAPI.Controllers
             catch (Exception ex) { return NotFound(ex.Message); }
         }
 
-        [HttpPost("team")]
+        [HttpGet("team")]
         [Authorize]
-        public async Task<ActionResult> SaveTeamConversation(
+        public async Task<ActionResult<IEnumerable<Messages>>> GetTeamConversation(
+                [FromQuery(Name = "teamName")] String teamName
+        )
+        {
+            var TeamName = new SqlParameter("@TeamName", teamName);
+            try
+            {
+                var result = await _context.Messages.FromSqlRaw("SELECT * FROM fnViewTeamConv(@TeamName)", TeamName).ToListAsync();
+                if (result == null)
+                {
+                    return NotFound();
+                }
+                return result;
+            }
+            catch (Exception ex) { return NotFound(ex.Message); }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult> SaveMessage(
                 [FromHeader(Name = "Authorization")] String token,
                 [FromQuery(Name = "conversationID")] int conversationID,
                 [FromQuery(Name = "content")] String content
@@ -55,6 +120,7 @@ namespace AthleetAPI.Controllers
             var ConvID = new SqlParameter("@ConvID", conversationID);
             var Content = new SqlParameter("@Content", content);
 
+            //The below only takes the convid so it works for both user and team messages
             await _context.Database.ExecuteSqlRawAsync("EXEC procInsertNewTeamMessage @UID, @ConvID, @Content", ConvID, uid, Content);
 
             return StatusCode(201);           
