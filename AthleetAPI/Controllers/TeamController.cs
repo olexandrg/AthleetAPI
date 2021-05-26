@@ -26,22 +26,46 @@ namespace AthleetAPI.Controllers
         [Authorize]
         public async Task<ActionResult<TeamModel>> GetTeam([FromQuery(Name = "teamName")] String teamName)
         {
-            var TeamName = new SqlParameter("@TeamName", teamName);
-            List<string> temp = new List<string>();
-
-            TeamModel team = new TeamModel();
-            team.TeamName = teamName;
-            IEnumerable<TeamUser> users = await _context.TeamUser.FromSqlRaw("SELECT * FROM fnViewTeamUsers(@TeamName)", TeamName).ToListAsync();
-            team.users = users;
-
-            TeamWorkoutNames[] workouts = _context.TeamWorkoutNames.FromSqlRaw("SELECT WorkoutName FROM fnViewTeamWorkouts(@TeamName)", TeamName).ToArray();
-            foreach (TeamWorkoutNames workout in workouts)
+            try
             {
-                temp.Add(workout.WorkoutName);
-            }
-            team.workoutNames = temp.ToArray();
+                var TeamName = new SqlParameter("@TeamName", teamName);
 
-            return team;
+                // construct new team and assign name
+                TeamModel team = new TeamModel();
+                team.TeamName = teamName;
+
+                // get current team users
+                IEnumerable<TeamUser> users = await _context.TeamUser.FromSqlRaw("SELECT * FROM fnViewTeamUsers(@TeamName)", TeamName).ToListAsync();
+
+                if (users == null)
+                {
+                    return StatusCode(404, "Invalid team; unable to fetch users list");
+                }
+
+                team.users = users;
+
+                // get team workouts
+                var workoutNames = await _context.TeamWorkoutNames.FromSqlRaw("SELECT WorkoutName FROM fnViewTeamWorkouts(@TeamName)", TeamName).ToListAsync();
+
+                if (workoutNames == null)
+                {
+                    return StatusCode(404, "Invalid team; unable to fetch workouts");
+                }
+
+                // get all workout names
+                TeamWorkoutNames[] workouts = workoutNames.ToArray();
+                foreach (TeamWorkoutNames workout in workouts)
+                {
+                    team.workoutNames.Append(workout.WorkoutName);
+                }
+
+                return team;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
         }
 
         //GET: api/Team/list
