@@ -210,8 +210,20 @@ namespace AthleetAPI.Controllers
             [FromQuery] string teamName
             )
         {
-            var teamId = _context.Team.Where(t => t.TeamName == teamName).FirstOrDefault();
-            return teamId.TeamID; 
+            try
+            {
+                var team  = _context.Team.Where(t => t.TeamName == teamName).FirstOrDefault();
+                if (team == null)
+                {
+                    return StatusCode(404, "Invalid team");
+                }
+
+                return team.TeamID;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 
