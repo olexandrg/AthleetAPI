@@ -117,7 +117,7 @@ namespace AthleetAPI.Models
     }
 
     [NotMapped]
-    public class Team
+    public class TeamModel
     {
         public string TeamName { get; set; }
         public IEnumerable<TeamUser> users { get; set; }
@@ -179,6 +179,14 @@ namespace AthleetAPI.Models
     {
         public string TeamName { get; set; }
         public string WorkoutName { get; set; }
+    }
+
+    public class Team
+    {
+        [Key]
+        public int TeamID { get; set; }
+        public string TeamName { get; set; }
+        public string Description { get; set; }
     }
 }
 

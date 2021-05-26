@@ -24,12 +24,12 @@ namespace AthleetAPI.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<Team>> GetTeam([FromQuery(Name = "teamName")] String teamName)
+        public async Task<ActionResult<TeamModel>> GetTeam([FromQuery(Name = "teamName")] String teamName)
         {
             var TeamName = new SqlParameter("@TeamName", teamName);
             List<string> temp = new List<string>();
 
-            Team team = new Team();
+            TeamModel team = new TeamModel();
             team.TeamName = teamName;
             IEnumerable<TeamUser> users = await _context.TeamUser.FromSqlRaw("SELECT * FROM fnViewTeamUsers(@TeamName)", TeamName).ToListAsync();
             team.users = users;
@@ -202,6 +202,16 @@ namespace AthleetAPI.Controllers
 
             //return success
             return StatusCode(204);
+        }
+
+        [HttpGet("id")]
+        [Authorize]
+        public ActionResult<int> getTeamId(
+            [FromQuery] string teamName
+            )
+        {
+            var teamId = _context.Team.Where(t => t.TeamName == teamName).FirstOrDefaultAsync().Result.TeamID;
+            return teamId; 
         }
     }
 

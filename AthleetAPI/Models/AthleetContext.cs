@@ -21,7 +21,7 @@ namespace AthleetAPI.Models
         public DbSet<ViewUserWorkouts> ViewUserWorkouts { get; set; }
         public DbSet<ViewExerciseInWorkout> ViewExerciseInWorkout { get; set; }
         public DbSet<TeamListItem> TeamListItem { get; set; }
-        public DbSet<Team> Team { get; set; }
+        public DbSet<TeamModel> TeamModel { get; set; }
         public DbSet<TeamUser> TeamUser { get; set; }
         public DbSet<TeamWorkoutNames> TeamWorkoutNames { get; set; }
         public DbSet<Messages> Messages { get; set; }
@@ -30,5 +30,6 @@ namespace AthleetAPI.Models
         public DbSet<ConvList> ConvList { get; set; }
         public DbSet<TeamWorkouts> TeamWorkouts { get; set; }
         //public DbSet<Conversation> Conversation { get; set; }
+        public DbSet<Team> Team { get; set; }
     }
 }
