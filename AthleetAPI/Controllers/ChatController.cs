@@ -42,7 +42,7 @@ namespace AthleetAPI.Controllers
                 var u2Conv = _context.UserConversations.Where(x => x.UserID == u2.UserId).Select(x => x.UserConversationID).ToList();
 
                 var res = u2Conv.Where(x => u1Conv.Contains(x));
-                if (res == null) return StatusCode(400, "Conversation already exists");
+                if (res != null) return StatusCode(400, "Conversation already exists");
 
                 Conversations conv = new Conversations();
                 conv.ConversationDate = DateTime.Now;
