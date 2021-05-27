@@ -38,11 +38,11 @@ namespace AthleetAPI.Controllers
                 User u2 = _context.User.FirstOrDefault(x => x.UserName == userName);
                 if (u2 == null) return StatusCode(404, "Other User not found");
 
-                var u1Conv = _context.UserConversations.Where(x => x.UserID == u1.UserId).Select(x => x.UserConversationID).ToList();
-                var u2Conv = _context.UserConversations.Where(x => x.UserID == u2.UserId).Select(x => x.UserConversationID).ToList();
+                var u1Conv = _context.UserConversations.Where(x => x.UserID == u1.UserId).Select(x => x.ConversationID).ToList();
+                var u2Conv = _context.UserConversations.Where(x => x.UserID == u2.UserId).Select(x => x.ConversationID).ToList();
 
                 var res = u2Conv.Where(x => u1Conv.Contains(x));
-                if (res != null) return StatusCode(400, "Conversation already exists");
+                if (res.Count() > 0) return StatusCode(400, "Conversation already exists");
 
                 Conversations conv = new Conversations();
                 conv.ConversationDate = DateTime.Now;
