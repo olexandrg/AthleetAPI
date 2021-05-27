@@ -21,6 +21,47 @@ namespace AthleetAPI.Controllers
         {
             _context = context;
         }
+        [HttpPost("user")]
+        [Authorize]
+        public async Task<ActionResult<int>> CreateUserConv(
+            [FromHeader(Name = "Authorization")] String token,
+            [FromQuery(Name = "OtherUser")] String userName
+        )
+        {
+            String UID = Utilities.pullUID(token);
+
+            try
+            {
+                User u1 = _context.User.FirstOrDefault(x => x.FirebaseUID == UID);
+                if (u1 == null) return StatusCode(404, "User not found");
+
+                User u2 = _context.User.FirstOrDefault(x => x.UserName == userName);
+                if (u2 == null) return StatusCode(404, "Other User not found");
+
+                var u1Conv = _context.UserConversations.Where(x => x.UserID == u1.UserId).Select(x => x.UserConversationID).ToList();
+                var u2Conv = _context.UserConversations.Where(x => x.UserID == u2.UserId).Select(x => x.UserConversationID).ToList();
+
+                var res = u2Conv.Where(x => u1Conv.Contains(x));
+                if (res == null) return StatusCode(400, "Conversation already exists");
+
+                Conversations conv = new Conversations();
+                conv.ConversationDate = DateTime.Now;
+                _context.Conversations.Add(conv);
+                _context.SaveChanges();
+
+                _context.UserConversations.Add(new UserConversations { ConversationID = conv.ConversationID, UserID = u1.UserId });
+                _context.UserConversations.Add(new UserConversations { ConversationID = conv.ConversationID, UserID = u2.UserId });
+
+                _context.SaveChanges();
+
+                return conv.ConversationID;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("user/list")]
         [Authorize]
 
