@@ -165,6 +165,30 @@ namespace AthleetAPI.Controllers
             await _context.Database.ExecuteSqlRawAsync("EXEC procInsertNewTeamMessage @UID, @ConvID, @Content", ConvID, uid, Content);
 
             return StatusCode(201);           
+        }     
+
+        [HttpDelete("delete")]
+        [Authorize]
+        public async Task<ActionResult> DeleteMessage([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "messageID")] int messageID)
+        {
+            try
+            {
+                var message = await _context.Messages.FirstOrDefaultAsync(x => x.MessageID == messageID);
+                if (message == null)
+                {
+                    return StatusCode(404, "No message found");
+                }
+                _context.Messages.Remove(message);
+                _context.SaveChanges();
+                return StatusCode(201);
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            
+
         }
     }
 }

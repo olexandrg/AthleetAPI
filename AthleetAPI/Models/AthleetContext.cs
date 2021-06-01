@@ -31,5 +31,7 @@ namespace AthleetAPI.Models
         public DbSet<TeamWorkouts> TeamWorkouts { get; set; }
         //public DbSet<Conversation> Conversation { get; set; }
         public DbSet<Team> Team { get; set; }
+
+        public DbSet<Notifications> Notifications { get; set; }
     }
 }

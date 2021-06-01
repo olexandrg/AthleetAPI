@@ -188,5 +188,14 @@ namespace AthleetAPI.Models
         public string TeamName { get; set; }
         public string Description { get; set; }
     }
+
+    public class Notifications
+    {
+        public int UserID { get; set; }
+        public DateTime DateAdded { get; set; }
+        [Key]
+        public int NotificationID { get; set; }
+
+    }
 }
 

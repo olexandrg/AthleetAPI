@@ -248,7 +248,42 @@ namespace AthleetAPI.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-        }
-    }
+        }  
 
+        [HttpGet("warning")]
+        [Authorize]
+        public async Task<ActionResult<DateTime>> getWarning([FromHeader(Name = "Authorization")] String token)
+        {
+            var uid = Utilities.pullUID(token);
+
+            int userId = _context.User.Where(x => x.FirebaseUID == uid).Select(x => x.UserId).First();
+            DateTime dateAdded = _context.Notifications.Where(x => x.UserID == userId).Select(x => x.DateAdded).Last();
+
+            return dateAdded;
+        }
+
+        [HttpPost("warn")]
+        [Authorize]
+        public async Task<ActionResult> warnUser([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "Date")] DateTime warningDate)
+        {
+            try
+            {
+                var user = await _context.User.FirstOrDefaultAsync(x => x.FirebaseUID == Utilities.pullUID(token));
+                if (user == null)
+                {
+                    return StatusCode(404, "No user with this FirebaseUID found");
+                }
+                _context.Notifications.Add(new Notifications { UserID = user.UserId, DateAdded = warningDate });
+                _context.SaveChanges();
+
+                return StatusCode(201);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+        }
+
+    }
 }
