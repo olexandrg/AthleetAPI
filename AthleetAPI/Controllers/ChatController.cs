@@ -165,19 +165,11 @@ namespace AthleetAPI.Controllers
             await _context.Database.ExecuteSqlRawAsync("EXEC procInsertNewTeamMessage @UID, @ConvID, @Content", ConvID, uid, Content);
 
             return StatusCode(201);           
-        }
-
-        /*
-         * @DELETE("Chat/delete")
-            fun deleteMessage(
-            @Header("Authorization") token: String,
-            @Query("messageID") messageID: Int
-    ): Call<ResponseBody>
-         */
+        }     
 
         [HttpDelete("delete")]
         [Authorize]
-        public Task<ActionResult> DeleteMessage([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "messageID")] int messageID)
+        public async Task<ActionResult> DeleteMessage([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "messageID")] int messageID)
         {
             String UID = Utilities.pullUID(token);
 
@@ -186,7 +178,7 @@ namespace AthleetAPI.Controllers
             _context.Messages.Remove(message);
             _context.SaveChanges();
 
-            return StatusCode(201);
+            return StatusCode(204);
         }
     }
 }

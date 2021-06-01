@@ -248,7 +248,40 @@ namespace AthleetAPI.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-        }
-    }
+        }  
 
+        [HttpGet("warning")]
+        [Authorize]
+        public async Task<ActionResult<DateTime>> getWarning([FromHeader(Name = "Authorization")] String token)
+        {
+            var uid = Utilities.pullUID(token);
+
+            int userId = _context.User.Where(x => x.FirebaseUID == uid).Select(x => x.UserId).First();
+            DateTime dateAdded = _context.Notifications.Where(x => x.UserID == userId).Select(x => x.DateAdded).Last();
+
+            return dateAdded;
+        }
+
+        /*
+         * // Sending a warning message to the user
+    @POST("Team/warn")
+    fun warnUser(
+        @Header("Authorization") token: String,
+        @Query("Date") date: Date
+    ) : Call<ResponseBody>
+         * 
+         */
+
+        [HttpPost("warn")]
+        [Authorize]
+        public async Task<ActionResult> warnUser([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "Date")] DateTime warningDate)
+        {
+            int userId = _context.User.Where(x => x.FirebaseUID == Utilities.pullUID(token)).Select(x => x.UserId).First();
+            _context.Notifications.Add(new Notifications { UserID = userId, DateAdded = warningDate });
+            _context.SaveChanges();
+
+            return StatusCode(201);
+        }
+
+    }
 }
