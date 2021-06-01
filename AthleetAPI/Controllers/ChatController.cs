@@ -177,7 +177,7 @@ namespace AthleetAPI.Controllers
 
         [HttpDelete("delete")]
         [Authorize]
-        public async Task<ActionResult> DeleteMessage([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "messageID")] int messageID)
+        public Task<ActionResult> DeleteMessage([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "messageID")] int messageID)
         {
             String UID = Utilities.pullUID(token);
 
