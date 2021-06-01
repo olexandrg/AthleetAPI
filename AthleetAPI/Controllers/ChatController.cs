@@ -166,5 +166,27 @@ namespace AthleetAPI.Controllers
 
             return StatusCode(201);           
         }
+
+        /*
+         * @DELETE("Chat/delete")
+            fun deleteMessage(
+            @Header("Authorization") token: String,
+            @Query("messageID") messageID: Int
+    ): Call<ResponseBody>
+         */
+
+        [HttpDelete("delete")]
+        [Authorize]
+        public async Task<ActionResult> DeleteMessage([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "messageID")] int messageID)
+        {
+            String UID = Utilities.pullUID(token);
+
+            var message = new Messages { MessageID = messageID };
+            _context.Messages.Attach(message);
+            _context.Messages.Remove(message);
+            _context.SaveChanges();
+
+            return StatusCode(201);
+        }
     }
 }
