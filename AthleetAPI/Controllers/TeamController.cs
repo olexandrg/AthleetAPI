@@ -262,16 +262,6 @@ namespace AthleetAPI.Controllers
             return dateAdded;
         }
 
-        /*
-         * // Sending a warning message to the user
-    @POST("Team/warn")
-    fun warnUser(
-        @Header("Authorization") token: String,
-        @Query("Date") date: Date
-    ) : Call<ResponseBody>
-         * 
-         */
-
         [HttpPost("warn")]
         [Authorize]
         public async Task<ActionResult> warnUser([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "Date")] DateTime warningDate)
