@@ -171,14 +171,24 @@ namespace AthleetAPI.Controllers
         [Authorize]
         public async Task<ActionResult> DeleteMessage([FromHeader(Name = "Authorization")] String token, [FromQuery(Name = "messageID")] int messageID)
         {
-            String UID = Utilities.pullUID(token);
+            try
+            {
+                var message = await _context.Messages.FirstOrDefaultAsync(x => x.MessageID == messageID);
+                if (message == null)
+                {
+                    return StatusCode(404, "No message found");
+                }
+                _context.Messages.Remove(message);
+                _context.SaveChanges();
+                return StatusCode(201);
+            }
 
-            var message = new Messages { MessageID = messageID };
-            _context.Messages.Attach(message);
-            _context.Messages.Remove(message);
-            _context.SaveChanges();
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            
 
-            return StatusCode(204);
         }
     }
 }
