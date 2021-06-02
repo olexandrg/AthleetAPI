@@ -271,7 +271,7 @@ namespace AthleetAPI.Controllers
                     .Where(x => x.DateAdded > now.AddHours(-24))
                     .ToListAsync();
 
-                if (notification == null)
+                if (notification.Count() == 0)
                 {
                     // if no notification within last 24 hours
                     return StatusCode(200);
