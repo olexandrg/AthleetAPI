@@ -49,23 +49,20 @@ namespace AthleetAPI.Controllers
 
                 if (workoutNames.Count() > 0)
                 {
-                    return StatusCode(404, "Invalid team; unable to fetch workouts");
+                    // get all workout names
+                    TeamWorkoutNames[] workouts = workoutNames.ToArray();
+                    foreach (TeamWorkoutNames workout in workouts)
+                    {
+                        team.workoutNames.Append(workout.WorkoutName);
+                    }
                 }
-
-                // get all workout names
-                TeamWorkoutNames[] workouts = workoutNames.ToArray();
-                foreach (TeamWorkoutNames workout in workouts)
-                {
-                    team.workoutNames.Append(workout.WorkoutName);
-                }
-
+               
                 return team;
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
-
         }
 
         //GET: api/Team/list
