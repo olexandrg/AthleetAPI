@@ -201,7 +201,7 @@ namespace AthleetAPI.Models
     public class Notifications
     {
         public int UserID { get; set; }
-        public DateTime? DateAdded { get; set; }
+        public DateTime DateAdded { get; set; }
         [Key]
         public int NotificationID { get; set; }
 
