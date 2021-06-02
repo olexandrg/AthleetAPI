@@ -252,14 +252,38 @@ namespace AthleetAPI.Controllers
 
         [HttpGet("warning")]
         [Authorize]
-        public async Task<ActionResult<DateTime>> getWarning([FromHeader(Name = "Authorization")] String token)
+        public async Task<ActionResult> getWarning([FromHeader(Name = "Authorization")] String token)
         {
-            var uid = Utilities.pullUID(token);
+            try
+            {
+                var uid = Utilities.pullUID(token);
 
-            int userId = _context.User.Where(x => x.FirebaseUID == uid).Select(x => x.UserId).First();
-            DateTime dateAdded = _context.Notifications.Where(x => x.UserID == userId).Select(x => x.DateAdded).Last();
+                User user = await _context.User.FirstOrDefaultAsync(x => x.FirebaseUID == uid);
 
-            return dateAdded;
+                if (user == null)
+                {
+                    return StatusCode(404, "No such user exists; unable to match FirebaseUID");
+                }
+
+                DateTime now = DateTime.UtcNow;
+                var notification = await _context.Notifications
+                    .Where(x => x.UserID == user.UserId)
+                    .Where(x => x.DateAdded > now.AddHours(-24))
+                    .ToListAsync();
+
+                if (notification == null)
+                {
+                    // if no notification within last 24 hours
+                    return StatusCode(200);
+                }
+
+                return StatusCode(204);
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpPost("warn")]
@@ -273,7 +297,13 @@ namespace AthleetAPI.Controllers
                 {
                     return StatusCode(404, "No user with this FirebaseUID found");
                 }
-                _context.Notifications.Add(new Notifications { UserID = user.UserId, DateAdded = warningDate });
+
+                var notification = new Notifications()
+                {
+                    UserID = user.UserId
+                };
+
+                _context.Notifications.Add(notification);
                 _context.SaveChanges();
 
                 return StatusCode(201);
