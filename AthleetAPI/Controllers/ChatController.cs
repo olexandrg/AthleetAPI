@@ -111,14 +111,14 @@ namespace AthleetAPI.Controllers
 
         [HttpGet("user")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Messages>>> GetUserConversation(
+        public async Task<ActionResult<IEnumerable<UserMessages>>> GetUserConversation(
                 [FromQuery(Name = "convID")] int convID
         )
         {
             var ConvID = new SqlParameter("@ConversationID", convID);
             try
             {
-                var result = await _context.Messages.FromSqlRaw("SELECT * FROM fnViewUserMessages(@ConversationID)", ConvID).ToListAsync();
+                var result = await _context.UserMessages.FromSqlRaw("SELECT * FROM fnViewUserMessages(@ConversationID)", ConvID).ToListAsync();
                 if (result == null)
                 {
                     return NotFound();
@@ -130,14 +130,14 @@ namespace AthleetAPI.Controllers
 
         [HttpGet("team")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Messages>>> GetTeamConversation(
+        public async Task<ActionResult<IEnumerable<UserMessages>>> GetTeamConversation(
                 [FromQuery(Name = "teamName")] String teamName
         )
         {
             var TeamName = new SqlParameter("@TeamName", teamName);
             try
             {
-                var result = await _context.Messages.FromSqlRaw("SELECT * FROM fnViewTeamConv(@TeamName)", TeamName).ToListAsync();
+                var result = await _context.UserMessages.FromSqlRaw("SELECT * FROM fnViewTeamConv(@TeamName)", TeamName).ToListAsync();
                 if (result == null)
                 {
                     return NotFound();
