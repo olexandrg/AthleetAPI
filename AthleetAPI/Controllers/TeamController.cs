@@ -300,7 +300,8 @@ namespace AthleetAPI.Controllers
 
                 var notification = new Notifications()
                 {
-                    UserID = user.UserId
+                    UserID = user.UserId,
+                    DateAdded = DateTime.UtcNow
                 };
 
                 _context.Notifications.Add(notification);
