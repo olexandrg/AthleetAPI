@@ -37,7 +37,7 @@ namespace AthleetAPI.Controllers
                 // get current team users
                 IEnumerable<TeamUser> users = await _context.TeamUser.FromSqlRaw("SELECT * FROM fnViewTeamUsers(@TeamName)", TeamName).ToListAsync();
 
-                if (users == null)
+                if (users.Count() == 0)
                 {
                     return StatusCode(404, "Invalid team; unable to fetch users list");
                 }
@@ -47,7 +47,7 @@ namespace AthleetAPI.Controllers
                 // get team workouts
                 var workoutNames = await _context.TeamWorkoutNames.FromSqlRaw("SELECT WorkoutName FROM fnViewTeamWorkouts(@TeamName)", TeamName).ToListAsync();
 
-                if (workoutNames == null)
+                if (workoutNames.Count() == 0)
                 {
                     return StatusCode(404, "Invalid team; unable to fetch workouts");
                 }
